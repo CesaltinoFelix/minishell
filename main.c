@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 
-void	first_token(char *str)
+void	ft_get_matrix(char *str, char **matrix)
 {
 	char	**arg;
 	int	i;
@@ -14,6 +14,15 @@ void	first_token(char *str)
 		printf("token[%d] = %s\n", i, arg[i]);
 		i++;
 	}
+	matrix = ft_copy_matrix(arg, i);
+	(void)matrix;
+	i = 0;
+	printf("\n\n\n");
+	while (matrix[i])
+	{
+		printf("token[%d] = %s\n", i, matrix[i]);
+		i++;
+	}
 }
 
 int	main(int argc, char **argv, char *env[])
@@ -22,6 +31,9 @@ int	main(int argc, char **argv, char *env[])
 	(void)argc;
 	(void)argv;
 	(void)env;
+	char **matrix;
+
+	matrix = NULL;
 	while (1)
 	{
 		input  = readline("> ");
@@ -34,7 +46,7 @@ int	main(int argc, char **argv, char *env[])
 			add_history(input);
 		ft_expand_variables(&input);
 		printf("Before tokens: %s\n", input);
-		first_token(input);
+		ft_get_matrix(input, matrix);
 		//printf("After tokens: %s\n", input);
 	}
 	return (0);

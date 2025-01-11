@@ -56,7 +56,7 @@ char **ft_split_quoted(const char *s, char c)
 			{
                 s++;
 				if(*s != '"')
-					while (*s && *s != c)
+					while (*s && *s != c && *s != '"')
                 		s++;
 			}
             len = s - start;
