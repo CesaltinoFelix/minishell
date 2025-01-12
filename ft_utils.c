@@ -72,5 +72,6 @@ char** ft_copy_matrix(char **matrix, int i)
 		j++;
 	}
 	
+	copy_matrix[j] = '\0';
 	return (copy_matrix);
 }

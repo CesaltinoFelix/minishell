@@ -15,7 +15,6 @@ void	ft_get_matrix(char *str, char **matrix)
 		i++;
 	}
 	matrix = ft_copy_matrix(arg, i);
-	(void)matrix;
 	i = 0;
 	printf("\n\n\n");
 	while (matrix[i])
