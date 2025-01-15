@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	**ft_get_matrix(char *input)
+char	**ft_get_matrix(char *input, int type_quote)
 {
 	char	**arg;
 	char	**matrix;
@@ -11,7 +11,7 @@ char	**ft_get_matrix(char *input)
 	while (arg[i])
 		i++;
 	free(input);
-	matrix = ft_copy_matrix(arg, i);
+	matrix = ft_copy_matrix(arg, i, type_quote);
 	ft_free_matrix(arg);
 	return (matrix);
 }
@@ -43,21 +43,23 @@ void	ft_check_cmd(char **matrix)
 void ft_read_inputs(char *input)
 {
 	char **matrix;
-	
+	int type_quote;
+
 	if (input == NULL || input[0] == '\0')
 	{
-		printf("exit\n");
 		free(input);
-		exit(1);
+		return;
 	}
 	if (input[0] != '\0')
 		add_history(input);
 	ft_expand_var(&input);
-	if (ft_check_quote(input) == -1)
+
+	type_quote = ft_check_quote(input);
+	if (type_quote == -1)
 		write(2, "Sintax: erro\n", 13);
 	else
 	{
-		matrix = ft_get_matrix(input);
+		matrix = ft_get_matrix(input, type_quote);
 		ft_check_cmd(matrix);
 	}
 }
@@ -71,7 +73,7 @@ int main(int argc, char **argv, char *env[])
 
 	while (1)
 	{
-		input = readline("> ");
+		input = readline("minishell> ");
 		ft_read_inputs(input);
 		// free(input);
 	}

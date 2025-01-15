@@ -28,22 +28,37 @@ int ft_check_quote(char *str)
 				i++;
 			if (str[i] == '\0')
 				return (-1);
+		}else
+		if (str[i] == '\'' && (i == 0 || str[i - 1] != '\\'))
+		{
+			i++;
+			status = 2;
+			while (str[i] && !(str[i] == '\'' && str[i - 1] != '\\'))
+				i++;
+			if (str[i] == '\0')
+				return (-1);
 		}
 		i++;
 	}
 	return (status);
 }
 
-int ft_strlen_unquote(char *str)
+int ft_strlen_unquote(char *str, int type_quote)
 {
 	int i;
 	int count;
-
+	char c;
 	i = 0;
 	count = 0;
+
+	if(type_quote == 1)
+		c = '"';
+	else
+		c = '\'';
+
 	while (str[i])
 	{
-		if (str[i] == '"')
+		if (str[i] == c)
 			i++;
 		else
 		{
@@ -54,16 +69,21 @@ int ft_strlen_unquote(char *str)
 	return (count);
 }
 
-int ft_strcpy_unquote(char *dest, const char *src, int size)
+int ft_strcpy_unquote(char *dest, const char *src, int size,  int type_quote)
 {
 	int i;
 	int j;
+	int c;
 
 	i = 0;
 	j = 0;
+	if(type_quote == 1)
+		c = '"';
+	else
+		c = '\'';
 	while (j < size && src[i] != '\0')
 	{
-		if (src[i] == '"')
+		if (src[i] == c)
 			i++;
 		else
 		{
@@ -78,7 +98,7 @@ int ft_strcpy_unquote(char *dest, const char *src, int size)
 	return (i);
 }
 
-char **ft_copy_matrix(char **matrix, int size)
+char **ft_copy_matrix(char **matrix, int size, int type_quote)
 {
 	char **copy_matrix;
 	int j;
@@ -88,9 +108,9 @@ char **ft_copy_matrix(char **matrix, int size)
 	copy_matrix = malloc(sizeof(char *) * (size + 1));
 	while (matrix[j] && j < size)
 	{
-		len = ft_strlen_unquote(matrix[j]);
+		len = ft_strlen_unquote(matrix[j], type_quote);
 		copy_matrix[j] = malloc(sizeof(char) * (len + 1));
-		ft_strcpy_unquote(copy_matrix[j], matrix[j], (int)len);
+		ft_strcpy_unquote(copy_matrix[j], matrix[j], (int)len, type_quote);
 		j++;
 	}
 	copy_matrix[j] = '\0';
