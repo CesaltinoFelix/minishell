@@ -2,11 +2,17 @@ NAME = minishell
 CC = cc
 CFLAGS =  -Wall -Wextra -Werror -lreadline -lhistory
 SRCS =	main.c \
-	./builtins/ft_echo.c \
+	ft_free.c \
+	ft_expand_var.c \
 	./tokens/ft_split2.c \
 	./tokens/ft_token_utils.c \
 	./tokens/ft_token_utils2.c \
-	ft_expand_var.c \
+	./builtins/ft_echo.c \
+	./builtins/ft_cd.c \
+	./builtins/ft_exit.c \
+	./builtins/ft_export.c \
+	./builtins/ft_pwd.c \
+	./builtins/ft_unset.c
 
 OBJS = $(SRCS:.c=.o)
 L_DIR = ./libft

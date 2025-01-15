@@ -1,18 +1,5 @@
 #include "minishell.h"
 
-void ft_free_matrix(char **matrix)
-{
-	int i;
-
-	i = 0;
-	while (matrix[i])
-	{
-		free(matrix[i]);
-		i++;
-	}
-	free(matrix);
-}
-
 char	**ft_get_matrix(char *input)
 {
 	char	**arg;
@@ -23,34 +10,35 @@ char	**ft_get_matrix(char *input)
 	arg = ft_split_quoted(input, ' ');
 	while (arg[i])
 		i++;
-	// free(input);
+	free(input);
 	matrix = ft_copy_matrix(arg, i);
 	ft_free_matrix(arg);
 	return (matrix);
 }
 
-void ft_cmd_error(char *str)
-{
-	char *start;
-	char *end;
-	char *ptr;
-	start = ft_strchr(str, '"');
-	end = ft_strrchr(start + 1, '"');
-	if (!start || !end)
-		return;
-	ptr = start + 1;
-	while (ptr < end)
-	{
-		printf("%c", *ptr);
-		ptr++;
-	}
-	printf(": command not found\n");
-}
 void	ft_write_error(char *str)
 {
 	while (*str)
 		write(2, str++, 1);
 	ft_putendl_fd(": command not found", 2);
+}
+
+void	ft_check_cmd(char **matrix)
+{
+	if (ft_strcmp(matrix[0], ("echo")) == 0)
+		ft_echo(matrix);
+	else if (ft_strcmp(matrix[0], ("cd")) == 0)
+		ft_cd(matrix);
+	else if (ft_strcmp(matrix[0], ("pwd")) == 0)
+		ft_pwd(matrix);
+	else if (ft_strcmp(matrix[0], ("export")) == 0)
+		ft_export(matrix);
+	else if (ft_strcmp(matrix[0], ("unset")) == 0)
+		ft_unset(matrix);
+	else if (ft_strcmp(matrix[0], ("exit")) == 0)
+		ft_exit(matrix);
+	else
+		ft_write_error(matrix[0]);
 }
 void ft_read_inputs(char *input)
 {
@@ -70,12 +58,7 @@ void ft_read_inputs(char *input)
 	else
 	{
 		matrix = ft_get_matrix(input);
-		if (ft_strcmp(matrix[0], ("echo")) != 0)
-		{
-			ft_write_error(matrix[0]);
-		}
-		else	
-			ft_echo(matrix);
+		ft_check_cmd(matrix);
 	}
 }
 
