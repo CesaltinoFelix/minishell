@@ -23,7 +23,7 @@ char	**ft_get_matrix(char *input)
 	arg = ft_split_quoted(input, ' ');
 	while (arg[i])
 		i++;
-	free(input);
+	// free(input);
 	matrix = ft_copy_matrix(arg, i);
 	ft_free_matrix(arg);
 	return (matrix);
@@ -46,7 +46,12 @@ void ft_cmd_error(char *str)
 	}
 	printf(": command not found\n");
 }
-
+void	ft_write_error(char *str)
+{
+	while (*str)
+		write(2, str++, 1);
+	ft_putendl_fd(": command not found", 2);
+}
 void ft_read_inputs(char *input)
 {
 	char **matrix;
@@ -62,16 +67,15 @@ void ft_read_inputs(char *input)
 	ft_expand_var(&input);
 	if (ft_check_quote(input) == -1)
 		write(2, "Sintax: erro\n", 13);
-	else if (ft_check_quote(input) == 1 && input[0] == '"')
-	{
-		ft_cmd_error(input);
-	}
 	else
 	{
 		matrix = ft_get_matrix(input);
-		if (ft_strlen(matrix[0]) > ft_strlen("echo"))
-			printf("%s: command not found", matrix[0]);
-		ft_echo(matrix);
+		if (ft_strcmp(matrix[0], ("echo")) != 0)
+		{
+			ft_write_error(matrix[0]);
+		}
+		else	
+			ft_echo(matrix);
 	}
 }
 
@@ -86,7 +90,7 @@ int main(int argc, char **argv, char *env[])
 	{
 		input = readline("> ");
 		ft_read_inputs(input);
-		free(input);
+		// free(input);
 	}
 	return (0);
 }

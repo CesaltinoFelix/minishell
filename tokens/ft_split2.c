@@ -1,66 +1,33 @@
 #include "../minishell.h"
 
-static size_t count_tokens(const char *s, char c)
+static size_t count_tokens(const char *s, char c) 
 {
     size_t count = 0;
 
-    while (*s)
+    while (*s) 
     {
-        if (*s == c)
-        {
+        if (*s == c) 
+		{
             s++;
             continue;
         }
         count++;
-        if (*s == '"')
+        if (*s == '"') 
         {
             s++;
-            while (*s && *s != '"')
+            while (*s && *s != '"') 
                 s++;
             if (*s == '"')
                 s++;
-        }
-        else
+        } 
+        else 
             while (*s && *s != c && *s != '"')
                 s++;
     }
     return count;
 }
 
-static const char *parse_quoted(const char *s, char c, const char **start, size_t *len)
-{
-    *start = s++;
-    while (*s && *s != '"')
-        s++;
-    if (*s == '"')
-    {
-        s++;
-        if (*s != '"')
-            while (*s && *s != c && *s != '"')
-                s++;
-    }
-    *len = s - *start;
-    return s;
-}
-
-static const char *parse_token(const char *s, char c, const char **start, size_t *len)
-{
-    *start = s;
-    while (*s && *s != c)
-    {
-        s++;
-        if (*s == '"')
-        {
-            s++;
-            while (*s != '"')
-                s++;
-        }
-    }
-    *len = s - *start;
-    return s;
-}
-
-char **ft_split_quoted(const char *s, char c)
+char **ft_split_quoted(const char *s, char c) 
 {
     char **result;
     size_t i = 0;
@@ -72,19 +39,46 @@ char **ft_split_quoted(const char *s, char c)
     result = malloc(sizeof(char *) * (count_tokens(s, c) + 1));
     if (!result)
         return NULL;
-    while (*s)
-    {
-        if (*s == c)
+    while (*s) 
+	{
+        if (*s == c) 
         {
             s++;
             continue;
         }
         if (*s == '"')
-            s = parse_quoted(s, c, &start, &len);
-        else
-            s = parse_token(s, c, &start, &len);
+        {
+            start = s;
+            s++;
+            while (*s && *s != '"')
+                s++;
+            if (*s == '"') 
+			{
+                s++;
+				if(*s != '"')
+					while (*s && *s != c && *s != '"')
+                		s++;
+			}
+            len = s - start;
+        } 
+        else 
+        {
+            start = s;
+            while (*s && *s != c)
+            {
+                s++;
+                if (*s == '"')
+                {
+                    s++;
+                    while (*s != '"')
+                        s++;
+                }
+            }
+            len = s - start;
+        }
         result[i++] = ft_strndup(start, len);
     }
     result[i] = '\0';
-    return (result);
+    return result;
 }
+

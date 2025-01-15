@@ -19,7 +19,6 @@ typedef struct s_var_exp
 } t_exp;
 
 /* FUNCTIONS */
-int ft_echo_wit_n(char **matrix);
 void ft_echo(char **matrix);
 void ft_read_inputs(char *input);
 void ft_expand_var(char **input);
