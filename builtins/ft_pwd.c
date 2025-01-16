@@ -1,6 +1,8 @@
 #include "../minishell.h"
 
-void    ft_pwd(char **matrix)
+void    ft_pwd(void)
 {
-    printf("test: %s\n", matrix[0]);
+    char    buf[255];
+    
+    printf("%s\n", getcwd(buf, sizeof(buf)));
 }
