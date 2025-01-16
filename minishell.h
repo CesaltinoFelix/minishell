@@ -20,31 +20,30 @@ typedef struct s_var_exp
 
 typedef struct s_env
 {
-    char    *env_var;
-    struct s_env   *next;
-}   t_env;
-
-
+    char *env_var;
+    struct s_env *next;
+} t_env;
 
 /* FUNCTIONS */
-void ft_echo(char **matrix);
-void ft_pwd(void);
-void ft_export(char **matrix, char *env[]);
-void ft_unset(char **matrix);
-void ft_cd(char **matrix);
-void ft_exit(char **matrix);
+int ft_pwd(void);
+int ft_cd(char **matrix);
+int ft_exit(char **matrix);
+int ft_echo(char **matrix);
+int ft_unset(char **matrix);
+int ft_env(char **matrix);
+int ft_export(char **matrix);
 
 int ft_check_quote(char *str);
-void ft_read_inputs(char *input, char *env[]);
+void ft_read_inputs(char *input);
 void ft_expand_var(char **input);
-int ft_strlen_unquote(char *str,  int type_quote);
+int ft_strlen_unquote(char *str, int type_quote);
 void ft_free_matrix(char **matrix);
-void	ft_check_cmd(char **matrix, char *env[]);
-int ft_strcpy_unquote(char *dest, const char *src, int size,  int type_quote);
+int ft_check_cmd(char **matrix);
+int ft_strcpy_unquote(char *dest, const char *src, int size, int type_quote);
 
 char *ft_strndup(const char *s, size_t len);
 char **ft_split_quoted(const char *s, char c);
 char **ft_copy_matrix(char **matrix, int size, int type_quote);
-char	**ft_get_matrix(char *input, int type_quote);
+char **ft_get_matrix(char *input, int type_quote);
 
 #endif

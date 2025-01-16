@@ -16,32 +16,39 @@ char **ft_get_matrix(char *input, int type_quote)
 	return (matrix);
 }
 
-void ft_write_error(char *str)
+int ft_write_error(char *str)
 {
 	while (*str)
 		write(2, str++, 1);
 	ft_putendl_fd(": command not found", 2);
+	return (2);
 }
 
-void ft_check_cmd(char **matrix, char *env[])
+int ft_check_cmd(char **matrix)
 {
-	if (ft_strcmp(matrix[0], ("echo")) == 0)
-		ft_echo(matrix);
-	else if (ft_strcmp(matrix[0], ("cd")) == 0)
-		ft_cd(matrix);
-	else if (ft_strcmp(matrix[0], ("pwd")) == 0)
-		ft_pwd();
-	else if (ft_strcmp(matrix[0], ("export")) == 0)
-		ft_export(matrix, env);
-	else if (ft_strcmp(matrix[0], ("unset")) == 0)
-		ft_unset(matrix);
-	else if (ft_strcmp(matrix[0], ("exit")) == 0)
-		ft_exit(matrix);
+	int	status;
+
+	status = 0;
+	if (ft_strcmp(matrix[0], "echo") == 0)
+		status = ft_echo(matrix);
+	else if (ft_strcmp(matrix[0], "cd") == 0)
+		status = ft_cd(matrix);
+	else if (ft_strcmp(matrix[0], "pwd") == 0)
+		status = ft_pwd();
+	else if (ft_strcmp(matrix[0], "export") == 0)
+		status = ft_export(matrix);
+	else if (ft_strcmp(matrix[0], "unset") == 0)
+		status = ft_unset(matrix);
+	else if (ft_strcmp(matrix[0], "env") == 0)
+		status = ft_env(matrix);
+	else if (ft_strcmp(matrix[0], "exit") == 0)
+		status = ft_exit(matrix);
 	else
-		ft_write_error(matrix[0]);
+		status = ft_write_error(matrix[0]);
+	return (status);
 }
 
-void ft_read_inputs(char *input, char *env[])
+void ft_read_inputs(char *input)
 {
 	char **matrix;
 	int type_quote;
@@ -60,11 +67,11 @@ void ft_read_inputs(char *input, char *env[])
 	else
 	{
 		matrix = ft_get_matrix(input, type_quote);
-		ft_check_cmd(matrix, env);
+		ft_check_cmd(matrix);
 	}
 }
 
-int main(int argc, char **argv, char *env[])
+int main(int argc, char **argv)
 {
 	char *input;
 	(void)argc;
@@ -73,7 +80,7 @@ int main(int argc, char **argv, char *env[])
 	while (1)
 	{
 		input = readline("minishell> ");
-		ft_read_inputs(input, env);
+		ft_read_inputs(input);
 		// free(input);
 	}
 	return (0);

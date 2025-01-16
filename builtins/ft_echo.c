@@ -6,7 +6,7 @@ static int ft_echo_with_n(char **matrix)
 	&& matrix[1] && strcmp(matrix[1], "-n") == 0);
 }
 
-void ft_echo(char **matrix)
+int ft_echo(char **matrix)
 {
 	
 	int i;
@@ -28,4 +28,5 @@ void ft_echo(char **matrix)
 	}
 	if (new_line)
 		printf("\n");
+	return (0);
 }

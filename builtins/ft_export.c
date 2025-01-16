@@ -80,27 +80,29 @@ void    ft_print_litst(t_env *head)
     }
 }
 
-void ft_export(char **matrix, char *env[])
+int ft_export(char **matrix)
 {
+    extern char **environ;
     t_env    *list;
     int i;
 
     i = -1;
     if (matrix[1] == NULL)
     {
-        while (env[++i])
-            printf("%s\n", env[i]);
+        while (environ[++i])
+            printf("%s\n", environ[i]);
     }
     else
     {
-        list = env_to_lis(env);
-        // ft_print_litst(list);
-        ft_add_env_var(&list, matrix[1]);
-        // ft_print_litst(list);
-        char **envp = list_to_env(list);
-        //ft_free_matrix(env);
-        env = envp;
-        while (env[++i])
-            printf("%s\n", env[i]);
+        int j = 1;
+        list = env_to_lis(environ);
+        while (matrix[j])
+        {
+            ft_add_env_var(&list, matrix[j]);
+            j++;
+        }
+        free(environ);
+        environ = list_to_env(list);
     }
+    return (0);
 }
