@@ -68,16 +68,23 @@ char **list_to_env(t_env *head)
     return (new_env);
 }
 
-void    ft_print_litst(t_env *head)
+int ft_check_option(char *str)
 {
-    t_env   *tmp;
+    int i = 0;
+    int flag = 0;
 
-    tmp = head;
-    while (tmp != NULL)
-    {
-        printf("%s\n", tmp->env_var);
-        tmp = tmp->next;
-    }
+    // if (str[0] == '-' && str[1])
+    //     flag = 1;
+    
+        while (str[i])
+        {
+            if (str[i] == '-')
+                flag = 1;
+            i++;
+        }
+    if (flag != 0)
+        return (flag);
+    return (0);
 }
 
 int ft_export(char **matrix)
@@ -96,9 +103,17 @@ int ft_export(char **matrix)
     {
         int j = 1;
         list = env_to_lis(environ);
+        if (matrix[1][0] == '-' && matrix[1][1])
+        {
+            printf("%s: %c%c: invalid option\n", matrix[0], matrix[1][0], matrix[1][1]);
+            return (2);
+        }
         while (matrix[j])
         {
-            ft_add_env_var(&list, matrix[j]);
+            if (ft_check_option(matrix[j]) == 1)
+                printf("%s: not a valid identifier\n", matrix[j]);
+            else
+                ft_add_env_var(&list, matrix[j]);
             j++;
         }
         free(environ);
