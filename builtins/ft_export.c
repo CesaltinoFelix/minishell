@@ -22,11 +22,36 @@ t_env *env_to_lis(char *env[])
     return (head);
 }
 
+int ft_compare_str(const char *s1, const char *s2)
+{
+    int i;
+
+    i = 0;
+    while (s1[i] && s2[i] && s1[i] != '=' && s2[i] != '=')
+    {
+        if (s1[i] != s2[i])
+            return (0);
+        i++;
+    }
+    return ((s1[i] == '=' || s1[i] == '\0') && (s2[i] == '=' || s2[i] == '\0'));
+}
+
 void ft_add_env_var(t_env **head, const char *arg)
 {
-    t_env *new_env = malloc(sizeof(t_env));
-    t_env *tmp = NULL;
+    t_env *new_env = NULL; 
+    t_env *tmp = *head;
 
+    while (tmp != NULL)
+    {
+        if (ft_compare_str(tmp->env_var, arg) != 0)
+        {
+            //free(tmp->env_var);
+            tmp->env_var = ft_strdup(arg);
+            return;
+        }
+        tmp = tmp->next;
+    }
+    new_env = malloc(sizeof(t_env));
     new_env->env_var = ft_strdup(arg);
     new_env->next = NULL;
     if (*head == NULL)
@@ -36,8 +61,8 @@ void ft_add_env_var(t_env **head, const char *arg)
         tmp = *head;
         while (tmp->next != NULL)
             tmp = tmp->next;
+        tmp->next = new_env;
     }
-    tmp->next = new_env;
 }
 
 char **list_to_env(t_env *head)
@@ -73,18 +98,18 @@ int ft_check_option(char *str)
     int i = 0;
     int flag = 0;
 
-    // if (str[0] == '-' && str[1])
-    //     flag = 1;
-    
+    if (ft_isdigit(str[i]))
+        flag = 1;
+    else
+    {
         while (str[i])
         {
-            if (str[i] == '-')
+            if (!ft_isalpha(str[i]))
                 flag = 1;
             i++;
         }
-    if (flag != 0)
-        return (flag);
-    return (0);
+    }
+    return (flag);
 }
 
 int ft_export(char **matrix)

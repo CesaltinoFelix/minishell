@@ -37,8 +37,6 @@ int ft_echo(char **matrix)
 	if (ft_echo_with_n(matrix) == 0)
 	{
 		new_line = 0;
-		// while (matrix[i] && matrix[i][0] == '-' && matrix[i][1] == 'n')
-		//     i++;
 		i = 2;
 	}
 	while (matrix[i])

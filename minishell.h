@@ -20,7 +20,7 @@ typedef struct s_var_exp
 
 typedef struct s_env
 {
-    char *env_var;
+    const char *env_var;
     struct s_env *next;
 } t_env;
 
