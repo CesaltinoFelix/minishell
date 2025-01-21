@@ -18,11 +18,6 @@ typedef struct s_var_exp
     char *var_value;
 } t_exp;
 
-// typedef struct s_env
-// {
-//     const char *env_var;
-//     struct s_env *next;
-// } t_env;
 
 /* FUNCTIONS */
 int ft_pwd(void);

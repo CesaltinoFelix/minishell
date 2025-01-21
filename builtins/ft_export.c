@@ -1,150 +1,129 @@
 #include "../minishell.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
-/*
-t_env *env_to_lis(char *env[])
+extern char **environ;
+
+// Protótipos de funções
+int is_valid_identifier(const char *str);
+char *get_key(const char *arg);
+char *get_value(const char *arg);
+void print_error(const char *arg);
+void update_or_add_env(const char *key, const char *value);
+void remove_env(const char *key);
+void list_env(void);
+int ft_export(char **args);
+
+// Implementação das funções
+
+int is_valid_identifier(const char *str)
 {
-    int i;
-    t_env *head = NULL;
-    t_env *last = NULL;
-    t_env *var;
-
-    i = -1;
-    while (env[++i])
-    {
-        var = malloc(sizeof(t_env));
-        var->env_var = ft_strdup(env[i]);
-        var->next = NULL;
-        if (head == NULL)
-            head = var;
-        else
-            last->next = var;
-        last = var;
-    }
-    return (head);
-}
-
-int ft_compare_str(const char *s1, const char *s2)
-{
-    int i;
-
-    i = 0;
-    while (s1[i] && s2[i] && s1[i] != '=' && s2[i] != '=')
-    {
-        if (s1[i] != s2[i])
+    if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))
+        return (0);
+    for (int i = 1; str[i] && str[i] != '='; i++)
+        if (!ft_isalnum(str[i]) && str[i] != '_')
             return (0);
+    return (1);
+}
+
+char *get_key(const char *arg)
+{
+    size_t i = 0;
+    while (arg[i] && arg[i] != '=')
         i++;
-    }
-    return ((s1[i] == '=' || s1[i] == '\0') && (s2[i] == '=' || s2[i] == '\0'));
+    return ft_substr(arg, 0, i);
 }
 
-void ft_add_env_var(t_env **head, const char *arg)
+char *get_value(const char *arg)
 {
-    t_env *new_env = NULL; 
-    t_env *tmp = *head;
-
-    while (tmp != NULL)
-    {
-        if (ft_compare_str(tmp->env_var, arg) != 0)
-        {
-            //free(tmp->env_var);
-            tmp->env_var = ft_strdup(arg);
-            return;
-        }
-        tmp = tmp->next;
-    }
-    new_env = malloc(sizeof(t_env));
-    new_env->env_var = ft_strdup(arg);
-    new_env->next = NULL;
-    if (*head == NULL)
-        *head = new_env;
-    else
-    {
-        tmp = *head;
-        while (tmp->next != NULL)
-            tmp = tmp->next;
-        tmp->next = new_env;
-    }
+    const char *equal_sign = ft_strchr(arg, '=');
+    if (!equal_sign)
+        return NULL;
+    return ft_strdup(equal_sign + 1);
 }
 
-char **list_to_env(t_env *head)
+void print_error(const char *arg)
 {
-    t_env *tmp;
-    int i;
-    int count;
-    char **new_env;
-
-    i = 0;
-    count = 0;
-    tmp = head;
-    while (tmp != NULL)
-    {
-        count++;
-        tmp = tmp->next;
-    }
-    new_env = malloc(sizeof(char *) * (count + 1));
-    if (!new_env)
-        return (NULL);
-    while (i < count)
-    {
-        new_env[i] = ft_strdup(head->env_var);
-        head = head->next;
-        i++;
-    }
-    new_env[count] = NULL;
-    return (new_env);
+    fprintf(stderr, "minishell: export: `%s`: not a valid identifier\n", arg);
 }
 
-int ft_check_option(char *str)
-{
-    int i = 0;
-    int flag = 0;
-
-    if (ft_isdigit(str[i]))
-        flag = 1;
-    else
-    {
-        while (str[i])
-        {
-            if (!ft_isalpha(str[i]))
-                flag = 1;
-            i++;
-        }
-    }
-    return (flag);
-}
-
-int ft_export(char **matrix)
+void update_or_add_env(const char *key, const char *value)
 {
     extern char **environ;
-    t_env    *list;
-    int i;
-
-    i = -1;
-    if (matrix[1] == NULL)
+    size_t key_len = strlen(key);
+    char *new_var = malloc(strlen(key) + strlen(value) + 2);
+    if (!new_var)
     {
-        while (environ[++i])
-            printf("%s\n", environ[i]);
+        perror("Erro ao alocar memória");
+        return;
+    }
+    sprintf(new_var, "%s=%s", key, value);
+
+    for (int i = 0; environ[i]; i++)
+    {
+        if (strncmp(environ[i], key, key_len) == 0 && environ[i][key_len] == '=')
+        {
+            free(environ[i]);
+            environ[i] = new_var;
+            return;
+        }
+    }
+
+    // Adicionar nova variável
+    for (int i = 0; ; i++)
+    {
+        if (!environ[i])
+        {
+            environ = realloc(environ, sizeof(char *) * (i + 2));
+            if (!environ)
+            {
+                perror("Erro ao realocar memória");
+                free(new_var);
+                return;
+            }
+            environ[i] = new_var;
+            environ[i + 1] = NULL;
+            return;
+        }
+    }
+}
+
+void list_env(void)
+{
+    extern char **environ;
+    for (int i = 0; environ[i]; i++)
+        printf("declare -x %s\n", environ[i]);
+}
+
+int ft_export(char **args)
+{
+    if (!args[1])
+    {
+        list_env();
     }
     else
     {
-        int j = 1;
-        list = env_to_lis(environ);
-        if (matrix[1][0] == '-' && matrix[1][1])
+        for (int i = 1; args[i]; i++)
         {
-            printf("%s: %c%c: invalid option\n", matrix[0], matrix[1][0], matrix[1][1]);
-            return (2);
-        }
-        while (matrix[j])
-        {
-            if (ft_check_option(matrix[j]) == 1)
-                printf("%s: not a valid identifier\n", matrix[j]);
+            if (is_valid_identifier(args[i]))
+            {
+                char *key = get_key(args[i]);
+                char *value = get_value(args[i]);
+
+                if (value)
+                    update_or_add_env(key, value);
+                   remove_env(key);
+
+                free(key);
+                free(value);
+            }
             else
-                ft_add_env_var(&list, matrix[j]);
-            j++;
+            {
+                print_error(args[i]);
+            }
         }
-        free(environ);
-        environ = list_to_env(list);
     }
-    return (0);
+    return 0;
 }
-*/
