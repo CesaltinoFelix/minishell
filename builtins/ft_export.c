@@ -114,8 +114,7 @@ int ft_export(char **args)
 
                 if (value)
                     update_or_add_env(key, value);
-                   remove_env(key);
-
+                //    remove_env(key);
                 free(key);
                 free(value);
             }

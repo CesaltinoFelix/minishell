@@ -6,7 +6,6 @@ SRCS =	main.c \
 	ft_expand_var.c \
 	./tokens/ft_split2.c \
 	./tokens/ft_token_utils.c \
-	./tokens/ft_token_utils2.c \
 	./builtins/ft_echo.c \
 	./builtins/ft_cd.c \
 	./builtins/ft_pwd.c \
