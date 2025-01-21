@@ -1,5 +1,6 @@
 #include "../minishell.h"
 
+/*
 t_env *env_to_lis(char *env[])
 {
     int i;
@@ -146,3 +147,4 @@ int ft_export(char **matrix)
     }
     return (0);
 }
+*/
