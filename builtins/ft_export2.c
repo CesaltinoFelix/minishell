@@ -1,112 +1,22 @@
 #include "../minishell.h"
-// #include <stdlib.h>
-// #include <stdio.h>
-// #include <string.h>
-// #include <ctype.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 extern char **environ;
 
-typedef struct s_env
-{
-    char *key;
-    char *value;
-    struct s_env *next;
-} t_env;
-
 // Protótipos de funções
-t_env *create_env_node(char *env_str);
-t_env *init_env(char **environ);
-void print_env(t_env *env);
-void free_env(t_env *env);
-void list_env(t_env *env);
 int is_valid_identifier(const char *str);
-void add_or_update_env(char *arg, t_env **env);
-char *get_key(char *arg);
-char *get_value(char *arg);
-void print_error(char *arg);
+char *get_key(const char *arg);
+char *get_value(const char *arg);
+void print_error(const char *arg);
+void update_or_add_env(const char *key, const char *value);
+void remove_env(const char *key);
+void list_env(void);
 int ft_export(char **args);
-char *ft_strdup(const char *s1);
-char *ft_substr(const char *s, unsigned int start, size_t len);
-char *ft_strchr(const char *s, int c);
-int ft_isalpha(int c);
-int ft_isalnum(int c);
-int ft_strcmp(const char *s1, const char *s2);
-void find_variable(const char *var_name);
+
 // Implementação das funções
-t_env *create_env_node(char *env_str)
-{
-    t_env *node = malloc(sizeof(t_env));
-    if (!node)
-        return (NULL);
-
-    char *equal_sign = strchr(env_str, '=');
-    if (!equal_sign)
-    {
-        free(node);
-        return (NULL);
-    }
-
-    size_t key_len = equal_sign - env_str;
-    node->key = strndup(env_str, key_len);
-    node->value = strdup(equal_sign + 1);
-    node->next = NULL;
-
-    return (node);
-}
-
-t_env *init_env(char **environ)
-{
-    t_env *head = NULL;
-    t_env *current = NULL;
-
-    for (int i = 0; environ[i] != NULL; i++)
-    {
-        t_env *new_node = create_env_node(environ[i]);
-        if (!new_node)
-            continue;
-
-        if (!head)
-            head = new_node;
-        else
-            current->next = new_node;
-
-        current = new_node;
-    }
-
-    return (head);
-}
-
-void print_env(t_env *env)
-{
-    while (env)
-    {
-        printf("%s=%s\n", env->key, env->value);
-        env = env->next;
-    }
-}
-
-void free_env(t_env *env)
-{
-    t_env *tmp;
-    while (env)
-    {
-        tmp = env;
-        env = env->next;
-        free(tmp->key);
-        free(tmp->value);
-        free(tmp);
-    }
-}
-
-void list_env(t_env *env)
-{
-    t_env *tmp = env;
-    while (tmp)
-    {
-        printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value ? tmp->value : "");
-        tmp = tmp->next;
-    }
-}
 
 int is_valid_identifier(const char *str)
 {
@@ -118,84 +28,120 @@ int is_valid_identifier(const char *str)
     return (1);
 }
 
-void add_or_update_env(char *arg, t_env **env)
+char *get_key(const char *arg)
 {
-    char *key = get_key(arg);
-    char *value = get_value(arg);
-    t_env *tmp = *env;
-
-    while (tmp)
-    {
-        if (ft_strcmp(tmp->key, key) == 0)
-        {
-            free(tmp->value);
-            tmp->value = value; 
-            free(key);
-            return;
-        }
-        tmp = tmp->next;
-    }
-    
-    t_env *new_node = malloc(sizeof(t_env));
-    new_node->key = key;
-    new_node->value = value;
-    new_node->next = *env;
-    *env = new_node;
-}
-
-char *get_key(char *arg)
-{
-    int i = 0;
+    size_t i = 0;
     while (arg[i] && arg[i] != '=')
         i++;
-    return (ft_substr(arg, 0, i));
+    return ft_substr(arg, 0, i);
 }
 
-char *get_value(char *arg)
+char *get_value(const char *arg)
 {
-    char *equal_sign = ft_strchr(arg, '=');
+    const char *equal_sign = ft_strchr(arg, '=');
     if (!equal_sign)
-        return (NULL);
-    return (ft_strdup(equal_sign + 1));
+        return NULL;
+    return ft_strdup(equal_sign + 1);
 }
 
-void print_error(char *arg)
+void print_error(const char *arg)
 {
     fprintf(stderr, "minishell: export: `%s`: not a valid identifier\n", arg);
 }
 
-
-
-void find_variable(const char *var_name)
+void update_or_add_env(const char *key, const char *value)
 {
-    char *value = getenv(var_name);
-    if (value)
-        printf("%s=%s\n", var_name, value);
-    else
-        printf("Variável %s não encontrada.\n", var_name);
-}
+    extern char **environ;
+    size_t key_len = strlen(key);
+    char *new_var = malloc(strlen(key) + strlen(value) + 2);
+    if (!new_var)
+    {
+        perror("Erro ao alocar memória");
+        return;
+    }
+    sprintf(new_var, "%s=%s", key, value);
 
-
-
-int ft_export(char **args)
-{
-    t_env *env = init_env(environ);
-    if (!args[1]) 
-        list_env(env);
-    else
-    { 
-        for (int i = 1; args[i]; i++)
+    for (int i = 0; environ[i]; i++)
+    {
+        if (strncmp(environ[i], key, key_len) == 0 && environ[i][key_len] == '=')
         {
-            if (is_valid_identifier(args[i]))
-                add_or_update_env(args[i], &env);
-            else
-                print_error(args[i]); 
+            free(environ[i]);
+            environ[i] = new_var;
+            return;
         }
     }
 
-    print_env(env);
-    printf("\nBuscando a variável PATH:\n");
-    find_variable("CEL");
-    free_env(env);
-    return (0);
+    // Adicionar nova variável
+    for (int i = 0; ; i++)
+    {
+        if (!environ[i])
+        {
+            environ = realloc(environ, sizeof(char *) * (i + 2));
+            if (!environ)
+            {
+                perror("Erro ao realocar memória");
+                free(new_var);
+                return;
+            }
+            environ[i] = new_var;
+            environ[i + 1] = NULL;
+            return;
+        }
+    }
+}
+
+void remove_env(const char *key)
+{
+    extern char **environ;
+    size_t key_len = strlen(key);
+
+    for (int i = 0; environ[i]; i++)
+    {
+        if (strncmp(environ[i], key, key_len) == 0 && environ[i][key_len] == '=')
+        {
+            free(environ[i]);
+            for (int j = i; environ[j]; j++)
+                environ[j] = environ[j + 1];
+            return;
+        }
+    }
+}
+
+void list_env(void)
+{
+    extern char **environ;
+    for (int i = 0; environ[i]; i++)
+        printf("declare -x %s\n", environ[i]);
+}
+
+int ft_export(char **args)
+{
+    if (!args[1])
+    {
+        list_env();
+    }
+    else
+    {
+        for (int i = 1; args[i]; i++)
+        {
+            if (is_valid_identifier(args[i]))
+            {
+                char *key = get_key(args[i]);
+                char *value = get_value(args[i]);
+
+                if (value)
+                    update_or_add_env(key, value);
+                // else
+                //     remove_env(key);
+
+                free(key);
+                free(value);
+            }
+            else
+            {
+                print_error(args[i]);
+            }
+        }
+    }
+    return 0;
 }

@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
 	while (1)
 	{
-		input = readline("minishell> ");
+		input = readline("\033[32mminishell> \033[0m");;
 		ft_read_inputs(input);
 		// free(input);
 	}
