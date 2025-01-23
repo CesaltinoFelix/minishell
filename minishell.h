@@ -41,7 +41,7 @@ void setup_signal_handlers(void);
 int ft_pwd(void);
 int ft_cd(char **matrix);
 int ft_env(char **matrix);
-int ft_exit(char **matrix, t_minishell *shell);
+void ft_exit(char **matrix, t_minishell *shell);
 int ft_echo(char **matrix);
 int ft_unset(char **matrix);
 int ft_export(char **matrix);

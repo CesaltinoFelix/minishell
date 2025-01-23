@@ -50,7 +50,6 @@ int ft_check_cmd(char **matrix, t_minishell *shell)
 
 void ft_read_inputs(char *input, t_minishell *shell)
 {
-	char **matrix;
 	int type_quote;
 
 	if (input == NULL || input[0] == '\0')
@@ -66,8 +65,8 @@ void ft_read_inputs(char *input, t_minishell *shell)
 		write(2, "Sintax: erro\n", 13);
 	else
 	{
-		matrix = ft_get_matrix(input, type_quote);
-		ft_check_cmd(matrix, shell);
+		shell->matrix = ft_get_matrix(input, type_quote);
+		ft_check_cmd(shell->matrix, shell);
 	}
 }
 void	init_shell(t_minishell *shell)

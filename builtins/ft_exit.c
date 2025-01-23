@@ -11,18 +11,19 @@ int ft_is_numeric(const char *str) {
     return 1;
 }
 
-int	ft_exit(char **args, t_minishell *shell) {
+void	ft_exit(char **args, t_minishell *shell) {
     int exit_code = shell->last_exit_code;
     printf("exit\n");
     
     if (args && args[1]) {
         if (!ft_is_numeric(args[1])) {
+        printf("oi");
             printf("minishell: exit: %s: numeric argument required\n", args[1]);
             exit_code = 255;
         } else if (args[2]) {
             fprintf(stderr, "minishell: exit: too many arguments\n");
             shell->last_exit_code = 1;
-            return 1;
+            return;
         } else {
             exit_code = ft_atoi(args[1]);
         }
