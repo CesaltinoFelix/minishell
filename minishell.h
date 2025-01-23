@@ -9,6 +9,11 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+typedef struct s_minishell
+{
+	int	last_exit_code;
+} t_minishell;
+
 typedef struct s_var_exp
 {
     int len;
@@ -34,19 +39,20 @@ void free_env(t_env *env);
 int ft_pwd(void);
 int ft_cd(char **matrix);
 int ft_env(char **matrix);
-int ft_exit(char **matrix);
+int ft_exit(char **matrix, t_minishell *shell);
 int ft_echo(char **matrix);
 int ft_unset(char **matrix);
 int ft_export(char **matrix);
 int ft_check_quote(char *str);
-int ft_check_cmd(char **matrix);
+int ft_check_cmd(char **matrix, t_minishell *shell);
 int ft_strlen_unquote(char *str, int type_quote);
 int ft_strcpy_unquote(char *dest, const char *src, int size, int type_quote);
 
-void ft_read_inputs(char *input);
+void ft_read_inputs(char *input, t_minishell *shell);
 void ft_expand_var(char **input);
 void ft_free_matrix(char **matrix);
 void ft_sort_string_matrix(char **matrix);
+void	init_shell(t_minishell *shell);
 
 char *ft_strndup(const char *s, size_t len);
 char **ft_split_quoted(const char *s, char c);

@@ -24,7 +24,7 @@ int ft_write_error(char *str)
 	return (2);
 }
 
-int ft_check_cmd(char **matrix)
+int ft_check_cmd(char **matrix, t_minishell *shell)
 {
 	int	status;
 
@@ -42,13 +42,13 @@ int ft_check_cmd(char **matrix)
 	else if (ft_strcmp(matrix[0], "env") == 0)
 		status = ft_env(matrix);
 	else if (ft_strcmp(matrix[0], "exit") == 0)
-		status = ft_exit(matrix);
+		status = ft_exit(matrix, shell);
 	else
 		status = ft_write_error(matrix[0]);
 	return (status);
 }
 
-void ft_read_inputs(char *input)
+void ft_read_inputs(char *input, t_minishell *shell)
 {
 	char **matrix;
 	int type_quote;
@@ -67,8 +67,12 @@ void ft_read_inputs(char *input)
 	else
 	{
 		matrix = ft_get_matrix(input, type_quote);
-		ft_check_cmd(matrix);
+		ft_check_cmd(matrix, shell);
 	}
+}
+void	init_shell(t_minishell *shell)
+{
+    shell->last_exit_code = 0;
 }
 
 int main(int argc, char **argv)
@@ -76,11 +80,12 @@ int main(int argc, char **argv)
 	char *input;
 	(void)argc;
 	(void)argv;
-
+	t_minishell	shell;
+	init_shell(&shell);
 	while (1)
 	{
 		input = readline("\033[32mminishell> \033[0m");;
-		ft_read_inputs(input);
+		ft_read_inputs(input, &shell);
 		// free(input);
 	}
 	return (0);

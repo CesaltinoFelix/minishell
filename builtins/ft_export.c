@@ -81,9 +81,9 @@ char *create_env_var(t_env *env)
 {
     int len;
     
-    len = strlen(env->key) + 2;
+    len = ft_strlen(env->key) + 2;
     if (env->value)
-        len += strlen(env->value);
+        len += ft_strlen(env->value);
     char *new_var = malloc(len);
     if (!new_var)
         return NULL;
@@ -164,7 +164,7 @@ void list_env(t_env *env)
     ft_sort_string_matrix(print_order);
     while (print_order[i])
     {
-        equal_sign = strchr(print_order[i], '=');
+        equal_sign = ft_strchr(print_order[i], '=');
         if (equal_sign)
         {
             *equal_sign = '\0';
