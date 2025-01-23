@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 static char ft_is_valid_variable(char *str)
 {

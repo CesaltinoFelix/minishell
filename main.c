@@ -81,6 +81,8 @@ int main(int argc, char **argv)
 	(void)argc;
 	(void)argv;
 	t_minishell	shell;
+
+	setup_signal_handlers();
 	init_shell(&shell);
 	while (1)
 	{

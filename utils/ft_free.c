@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 void ft_free_matrix(char **matrix)
 {

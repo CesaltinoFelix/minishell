@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <signal.h>
 #include "./libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -35,7 +36,7 @@ typedef struct s_env
 /* FUNCTIONS */
 int ft_compare_str(const char *s1, const char *s2);
 void free_env(t_env *env);
-
+void setup_signal_handlers(void);
 int ft_pwd(void);
 int ft_cd(char **matrix);
 int ft_env(char **matrix);
