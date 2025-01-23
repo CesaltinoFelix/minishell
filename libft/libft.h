@@ -6,7 +6,7 @@
 /*   By: playboy7xb <playboy7xb@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 13:08:46 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/01/14 20:37:04 by playboy7xb       ###   ########.fr       */
+/*   Updated: 2025/01/23 10:23:27 by playboy7xb       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 
 size_t	ft_strlen(const char *s);
+size_t 	ft_strcat(char *dst, const char *src);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 

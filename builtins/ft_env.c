@@ -1,20 +1,23 @@
 #include "../minishell.h"
 
-int     ft_env(char **matrix)
+int ft_env(char **matrix)
 {
-        extern char **environ;
         int     i;
+        extern char     **environ;
 
         i = -1;
         if (matrix[1] != NULL)
         {
-                printf("too few arguments\n");
+                perror("too few arguments\n");
                 return (2);
         }
         else
         {
                 while (environ[++i])
-                        printf("%s\n", environ[i]);
+                {
+                        if (ft_strchr(environ[i], '='))
+                                printf("%s\n", environ[i]);
+                }
         }
         return (0);
 }

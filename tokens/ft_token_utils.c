@@ -116,3 +116,28 @@ char **ft_copy_matrix(char **matrix, int size, int type_quote)
 	copy_matrix[j] = '\0';
 	return (copy_matrix);
 }
+
+
+void    ft_sort_string_matrix(char **matrix)
+{
+        int     i;
+        int     len;
+        char    *tmp;
+
+        i = 0;
+        len = -1;
+        tmp = NULL;
+        while (matrix[++len]);
+        while (i < len - 1)
+        {
+                if (ft_strcmp(matrix[i], matrix[i + 1]) > 0)
+                {
+                        tmp = matrix[i];
+                        matrix[i] = matrix[i + 1];
+                        matrix[i + 1] = tmp;
+                        i = 0;
+                }
+                else
+                        i++;
+        }
+}

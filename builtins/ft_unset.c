@@ -4,6 +4,9 @@ int ft_compare_str(const char *s1, const char *s2)
 {
     int i;
 
+    if (!s1 || !s2) 
+        return (0);
+
     i = 0;
     while (s1[i] && s2[i] && s1[i] != '=' && s2[i] != '=')
     {
@@ -66,7 +69,7 @@ void copy_valid_env(char **new_env, char **environ, char **matrix)
             j++;
         }
         if (!found)
-            new_env[k++] = ft_strdup(environ[i]);
+            new_env[k++] = strdup(environ[i]);
         i++;
     }
     new_env[k] = NULL;
@@ -81,7 +84,10 @@ int ft_unset(char **matrix)
     len = count_valid_env(environ, matrix);
     new_env = malloc(sizeof(char *) * (len + 1));
     if (!new_env)
+    {
+        perror("Erro ao alocar memória para new_env");
         return (1);
+    }
     copy_valid_env(new_env, environ, matrix);
     environ = new_env;
     return (0);

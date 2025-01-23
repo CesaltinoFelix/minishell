@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "minishell.h": "c"
-    }
+    },
+    "functionHeaderExtension.headerFilePath": "/home/playboy7xb/minishell/minishell.h"
 }
