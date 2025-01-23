@@ -42,7 +42,7 @@ int ft_check_cmd(char **matrix, t_minishell *shell)
 	else if (ft_strcmp(matrix[0], "env") == 0)
 		status = ft_env(matrix);
 	else if (ft_strcmp(matrix[0], "exit") == 0)
-		status = ft_exit(matrix, shell);
+		ft_exit(matrix, shell);
 	else
 		status = ft_write_error(matrix[0]);
 	return (status);
@@ -86,10 +86,8 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		input = readline("\033[32mminishell> \033[0m");
-		if (!input) {
+		if (!input) 
             ft_exit(NULL, &shell);
-            break;
-        }
 		ft_read_inputs(input, &shell);
 		// free(input);
 	}
