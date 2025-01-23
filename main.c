@@ -86,7 +86,11 @@ int main(int argc, char **argv)
 	init_shell(&shell);
 	while (1)
 	{
-		input = readline("\033[32mminishell> \033[0m");;
+		input = readline("\033[32mminishell> \033[0m");
+		if (!input) {
+            ft_exit(NULL, &shell);
+            break;
+        }
 		ft_read_inputs(input, &shell);
 		// free(input);
 	}

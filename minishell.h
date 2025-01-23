@@ -13,6 +13,7 @@
 typedef struct s_minishell
 {
 	int	last_exit_code;
+    char **matrix;
 } t_minishell;
 
 typedef struct s_var_exp

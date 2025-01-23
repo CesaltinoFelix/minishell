@@ -15,7 +15,7 @@ int	ft_exit(char **args, t_minishell *shell) {
     int exit_code = shell->last_exit_code;
     printf("exit\n");
     
-    if (args[1]) {
+    if (args && args[1]) {
         if (!ft_is_numeric(args[1])) {
             printf("minishell: exit: %s: numeric argument required\n", args[1]);
             exit_code = 255;

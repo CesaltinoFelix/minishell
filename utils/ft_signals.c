@@ -3,13 +3,14 @@
 
 static void handle_sigint(int sig) {
     (void)sig;
-    printf("\nminishell> ");
+    printf("\ncelson ");
     fflush(stdout);
 }
 
 static void handle_sigquit(int sig) {
     (void)sig;
-    printf("\b\b  \b\b");
+    // printf("\b\b  \b\b");
+    printf("cesaltino");
     fflush(stdout);
 }
 
