@@ -22,7 +22,8 @@ LIBFT = $(L_DIR)/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(OBJS) $(LIBFT) -o $(NAME) $(CFLAGS) 
+	$(CC) $(OBJS) $(LIBFT) -o $(NAME) $(CFLAGS)
+	rm -f $(OBJS)
 
 $(LIBFT):
 	$(MAKE) -C $(L_DIR)
