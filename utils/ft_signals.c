@@ -9,8 +9,7 @@ static void handle_sigint(int sig) {
 
 static void handle_sigquit(int sig) {
     (void)sig;
-    printf("\b\b  \b\b");
-    fflush(stdout);
+    signal(SIGQUIT, SIG_IGN);
 }
 
 void setup_signal_handlers(void) {
