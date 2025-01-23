@@ -41,4 +41,9 @@ re: fclean all
 e: 	all
 	./minishell 
 
-.PHONY: all clean fclean re
+push:
+	git add .
+	git commit -m "Updating code"
+	git push
+
+.PHONY: all clean fclean re push
