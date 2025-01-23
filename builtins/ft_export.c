@@ -129,8 +129,8 @@ void update_or_add_env(t_env *env)
     int i;
     char *new_var = NULL;
 
-    i = 0;
-    while (env->variables[i])
+    i = -1;
+    while (env->variables[++i])
     {
         if (ft_compare_str(env->variables[i], env->key) != 0)
         {
@@ -147,7 +147,6 @@ void update_or_add_env(t_env *env)
             }
             return;
         }
-        i++;
     }
     new_var = create_env_var(env);
     if (new_var)

@@ -69,7 +69,7 @@ void copy_valid_env(char **new_env, char **environ, char **matrix)
             j++;
         }
         if (!found)
-            new_env[k++] = strdup(environ[i]);
+            new_env[k++] = ft_strdup(environ[i]);
         i++;
     }
     new_env[k] = NULL;

@@ -83,6 +83,5 @@ int main(int argc, char **argv)
 		ft_read_inputs(input);
 		// free(input);
 	}
-	free_env();
 	return (0);
 }
