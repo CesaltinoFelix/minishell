@@ -40,26 +40,30 @@ typedef struct s_minishell
         int last_exit_code;
 } t_minishell;
 
-/* FUNCTIONS */
-int is_valid_identifier(const char *str);
-char **ft_cpy_env(char *env[]);
-void extract_key_value(t_minishell *shell, const char *arg);
-void update_or_add_env(t_minishell *shell);
-void    ft_sort_string_matrix(char **matrix);
-void ft_free_matrix(char **matrix);
-char **ft_split_quoted(const char *s, char c) ;
-int ft_pwd(void);
-int ft_cd(t_minishell *shell);
-int ft_env(t_minishell *shell);
-int ft_echo(t_minishell *shell);
-int ft_exit(t_minishell *shell);
-int ft_unset(t_minishell *shell);
-int ft_export(t_minishell *shell);
 
-char *ft_strndup(const char *s, size_t len);
-int ft_check_quote(char *str);
-int ft_strlen_unquote(const char *str);
-int ft_strcpy_unquote(char *dest, const char *src, int size);
-char **ft_copy_matrix(char **matrix, int size);
+void    setup_signal_handlers(void);
+void    ft_expand_var(char **input);
+void    ft_exit(t_minishell *shell);
+void    ft_free_matrix(char **matrix);
+void    check_to_free(t_minishell *shell);
+void    update_or_add_env(t_minishell *shell);
+void    ft_sort_string_matrix(char **matrix);
+void    extract_key_value(t_minishell *shell, const char *arg);
+
+char    **ft_cpy_env(char *env[]);
+char    *ft_strndup(const char *s, size_t len);
+char    **ft_split_quoted(const char *s, char c) ;
+char    **ft_copy_matrix(char **matrix, int size);
+
+int     ft_pwd();
+int     ft_cd(t_minishell *shell);
+int     ft_check_quote(char *str);
+int     ft_env(t_minishell *shell);
+int     ft_echo(t_minishell *shell);
+int     ft_unset(t_minishell *shell);
+int     ft_export(t_minishell *shell);
+int     ft_strlen_unquote(const char *str);
+int     is_valid_identifier(const char *str);
+int     ft_strcpy_unquote(char *dest, const char *src, int size);
 
 #endif

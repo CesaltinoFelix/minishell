@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-int    ft_pwd(void)
+int    ft_pwd()
 {
     char    buf[255];
     

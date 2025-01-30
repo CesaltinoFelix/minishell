@@ -57,6 +57,5 @@ int ft_echo(t_minishell *shell)
     }
     if (new_line)
         printf("\n");
-
     return (0);
 }

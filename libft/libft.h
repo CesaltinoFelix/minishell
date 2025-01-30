@@ -6,7 +6,7 @@
 /*   By: playboy7xb <playboy7xb@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 13:08:46 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/01/23 10:23:27 by playboy7xb       ###   ########.fr       */
+/*   Updated: 2025/01/30 12:59:46 by playboy7xb       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ typedef struct s_list
 }	t_list;
 
 int		ft_isalpha(int c);
+int		ft_isspace(int c);
 int		ft_isdigit(int c);
 int		ft_isalnum(int c);
 int		ft_isascii(int c);

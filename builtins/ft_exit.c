@@ -1,5 +1,3 @@
-
-
 #include "../minishell.h"
 
 int ft_is_numeric(const char *str)
@@ -17,11 +15,12 @@ int ft_is_numeric(const char *str)
     return 1;
 }
 
-int ft_exit(t_minishell *shell)
+void ft_exit(t_minishell *shell)
 {
-    int exit_code = shell->last_exit_code;
+    int exit_code;
+    
+    exit_code = shell->last_exit_code;
     printf("exit\n");
-
     if (shell->matrix && shell->matrix[1])
     {
         if (!ft_is_numeric(shell->matrix[1]))
@@ -31,16 +30,13 @@ int ft_exit(t_minishell *shell)
         }
         else if (shell->matrix[2])
         {
-            fprintf(stderr, "minishell: exit: too many arguments\n");
+            perror("minishell: exit: too many arguments\n");
             shell->last_exit_code = 1;
-            return (1);
+            return;
         }
         else
-        {
             exit_code = ft_atoi(shell->matrix[1]);
-        }
     }
-    // Nao podemos esquecer de liberar os recursos do minishell aqui
+    check_to_free(shell);
     exit(exit_code);
-    return (exit_code);
 }
