@@ -23,25 +23,30 @@ static int ft_echo_with_n(t_minishell *shell)
     return (1);
 }
 
+void    ft_aux_echo(t_minishell *shell, int *i)
+{
+    int j;
+
+    while (shell->matrix[*i] && shell->matrix[*i][0] == '-' && shell->matrix[*i][1] == 'n')
+    {
+        j = 2;
+        while (shell->matrix[*i][j] == 'n')
+            j++;
+        if (shell->matrix[*i][j] != '\0')
+            break;
+        (*i)++;
+    }
+}
+
 int ft_echo(t_minishell *shell)
 {
-    int i;
-    int j;
-    int new_line;
-    
-    i = 1;
-    new_line = 1;
+    int i = 1;
+    int new_line = 1;
+
     if (ft_echo_with_n(shell) == 0)
     {
-        new_line = 0;
-        while (shell->matrix[i] && shell->matrix[i][0] == '-' && shell->matrix[i][1] == 'n')
-        {
-           j = 2;
-            while (shell->matrix[i][j] == 'n')
-                j++;
-            if (shell->matrix[i][j] != '\0')
-            i++;
-        }
+       new_line = 0;
+       ft_aux_echo(shell, &i);
     }
     while (shell->matrix[i])
     {
@@ -52,5 +57,6 @@ int ft_echo(t_minishell *shell)
     }
     if (new_line)
         printf("\n");
+
     return (0);
 }
