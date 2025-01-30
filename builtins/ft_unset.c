@@ -1,6 +1,5 @@
 #include "../minishell.h"
 
-// Função para comparar duas strings até o '=' ou o final
 static int compare_names(const char *s1, const char *s2)
 {
     int i;
@@ -17,7 +16,6 @@ static int compare_names(const char *s1, const char *s2)
     return (0);
 }
 
-// Função para verificar se uma variável de ambiente deve ser removida
 static int should_remove(char *env_var, t_minishell *shell)
 {
     int i;
@@ -35,16 +33,15 @@ static int should_remove(char *env_var, t_minishell *shell)
         if (compare_names(env_var, matrix_var))
         {
             if (ft_strchr(matrix_var, '=') == NULL)
-                return (1); // Remove se matrix_var não tem '='
+                return (1);
             if (ft_strcmp(env_var, matrix_var) == 0)
-                return (1); // Remove se as strings forem iguais
+                return (1);
         }
         i++;
     }
     return (0);
 }
 
-// Função para contar as variáveis de ambiente que não devem ser removidas
 static int count_valid_envs(t_minishell *shell)
 {
     int i;
