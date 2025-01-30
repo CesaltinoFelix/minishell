@@ -1,19 +1,59 @@
 #include "minishell.h"
 
-char **ft_get_matrix(char *input, int type_quote)
+char **ft_cpy_env(char *env[])
+{
+    int i;
+    char **new_env;
+
+    i = -1;
+    while (env[++i])
+        ;
+    new_env = malloc(sizeof(char *) * (i + 1));
+    if (new_env == NULL)
+        return (NULL);
+    i = -1;
+    while (env[++i])
+        new_env[i] = ft_strdup(env[i]);
+    new_env[i] = NULL;
+    return (new_env);
+}
+
+void    ft_init_env(t_minishell *shell)
+{
+        shell->env.key_len = 0;
+        shell->env.key = NULL;
+        shell->env.value = NULL;
+        shell->env.new_var = NULL;
+        shell->env.equal_sign = NULL;
+}
+void init_shell(t_minishell *shell, char *env[])
+{
+        shell->exp.len = 0;
+        shell->exp.start = NULL;
+        shell->exp.end = NULL;
+        shell->exp.var_name = NULL;
+        shell->exp.var_value = NULL;
+        ft_init_env(shell);
+        shell->env_var = ft_cpy_env(env);
+        shell->input = NULL;
+        shell->matrix = NULL;
+        shell->old_path = NULL;
+        shell->current_path = NULL;
+        shell->last_exit_code = 0;
+}
+
+char **ft_get_matrix(t_minishell *shell)
 {
 	char **arg;
-	char **matrix;
 	int i;
 
-	i = 0;
-	arg = ft_split_quoted(input, ' ');
-	while (arg[i])
-		i++;
-	free(input);
-	matrix = ft_copy_matrix(arg, i, type_quote);
-	ft_free_matrix(arg);
-	return (matrix);
+	i = -1;
+	arg = ft_split_quoted(shell->input, ' ');
+	while (arg[++i]);
+	shell->matrix = ft_copy_matrix(arg, i);
+	free(shell->input);
+        ft_free_matrix(arg);
+	return (shell->matrix);
 }
 
 int ft_write_error(char *str)
@@ -24,72 +64,65 @@ int ft_write_error(char *str)
 	return (2);
 }
 
-int ft_check_cmd(char **matrix, t_minishell *shell)
+int ft_check_cmd(t_minishell *shell)
 {
 	int	status;
-
+	
 	status = 0;
-	if (ft_strcmp(matrix[0], "echo") == 0)
-		status = ft_echo(matrix);
-	else if (ft_strcmp(matrix[0], "cd") == 0)
-		status = ft_cd(matrix);
-	else if (ft_strcmp(matrix[0], "pwd") == 0)
+	if (ft_strcmp(shell->matrix[0], "echo") == 0)
+		status = ft_echo(shell);
+	else if (ft_strcmp(shell->matrix[0], "cd") == 0)
+		status = ft_cd(shell);
+	else if (ft_strcmp(shell->matrix[0], "pwd") == 0)
 		status = ft_pwd();
-	else if (ft_strcmp(matrix[0], "export") == 0)
-		status = ft_export(matrix);
-	else if (ft_strcmp(matrix[0], "unset") == 0)
-		status = ft_unset(matrix);
-	else if (ft_strcmp(matrix[0], "env") == 0)
-		status = ft_env(matrix);
-	else if (ft_strcmp(matrix[0], "exit") == 0)
-		ft_exit(matrix, shell);
-	else
-		status = ft_write_error(matrix[0]);
-	return (status);
+	else if (ft_strcmp(shell->matrix[0], "export") == 0)
+		status = ft_export(shell);
+	else if (ft_strcmp(shell->matrix[0], "unset") == 0)
+		status = ft_unset(shell);
+	else if (ft_strcmp(shell->matrix[0], "env") == 0)
+		status = ft_env(shell);
+	else if (ft_strcmp(shell->matrix[0], "exit") == 0)
+		status = ft_exit(shell);
+        else
+                status = ft_write_error(shell->matrix[0]);
+        return (status);
 }
 
-void ft_read_inputs(char *input, t_minishell *shell)
+void ft_read_inputs(t_minishell *shell)
 {
-	int type_quote;
-
-	if (input == NULL || input[0] == '\0')
-	{
-		free(input);
-		return;
-	}
-	if (input[0] != '\0')
-		add_history(input);
-	ft_expand_var(&input);
-	type_quote = ft_check_quote(input);
-	if (type_quote == -1)
-		write(2, "Sintax: erro\n", 13);
-	else
-	{
-		shell->matrix = ft_get_matrix(input, type_quote);
-		ft_check_cmd(shell->matrix, shell);
-	}
-}
-void	init_shell(t_minishell *shell)
-{
-    shell->last_exit_code = 0;
+        if (ft_check_quote(shell->input) == -1)
+        {
+                printf("error: input invalid: %s\n", shell->input);
+                free(shell->input);
+                return;
+        }
+        else
+        {
+                shell->matrix = ft_get_matrix(shell);
+                ft_check_cmd(shell);
+        }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char const *argv[], char *env[])
 {
-	char *input;
-	(void)argc;
-	(void)argv;
-	t_minishell	shell;
+        (void)argc;
+        (void)argv;
+        t_minishell shell;
 
-	setup_signal_handlers();
-	init_shell(&shell);
-	while (1)
-	{
-		input = readline("\033[32mminishell> \033[0m");
-		if (!input) 
-            ft_exit(NULL, &shell);
-		ft_read_inputs(input, &shell);
-		// free(input);
-	}
-	return (0);
+        init_shell(&shell, env);
+        while (1)
+        {
+                shell.input = readline("minishell> ");
+                if (!shell.input || shell.input[0] == '\0')
+                {
+                        free(shell.input);
+                        ft_free_matrix(shell.matrix);
+                        return (1);
+                }
+                if (shell.input[0] != '\0')
+                        add_history(shell.input);
+                ft_read_inputs(&shell);
+        }
+        free(shell.input);
+        return 0;
 }

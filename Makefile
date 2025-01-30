@@ -39,6 +39,7 @@ fclean: clean
 re: fclean all
 
 e: 	all
+	clear
 	./minishell 
 
 push:
