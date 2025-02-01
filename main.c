@@ -71,6 +71,30 @@ int ft_write_error(char *str)
     return (2);
 }
 
+int ft_execute_bin(t_minishell *shell)
+{
+    pid_t pid;
+    int status;
+
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        return (1);
+    }
+    if (pid == 0)
+    {
+        if (execvp(shell->matrix[0], shell->matrix) == -1)
+        {
+            perror("execvp");
+            exit(127);
+        }
+    }
+    else
+        waitpid(pid, &status, 0);
+    return (WEXITSTATUS(status));
+}
+
 int ft_check_cmd(t_minishell *shell)
 {
     int status;
@@ -91,8 +115,11 @@ int ft_check_cmd(t_minishell *shell)
     else if (ft_strcmp(shell->matrix[0], "exit") == 0)
         ft_exit(shell);
     else
-        status = ft_write_error(shell->matrix[0]);
+        status = ft_execute_bin(shell);
     return (status);
+    // else
+    //     status = ft_write_error(shell->matrix[0]);
+    // return (status);
 }
 
 void ft_read_inputs(t_minishell *shell)
