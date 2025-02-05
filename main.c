@@ -74,6 +74,7 @@ int ft_write_error(char *str)
 int ft_execute_bin(t_minishell *shell)
 {
     pid_t pid;
+    char *path;
     int status;
 
     pid = fork();
@@ -84,7 +85,8 @@ int ft_execute_bin(t_minishell *shell)
     }
     if (pid == 0)
     {
-        if (execvp(shell->matrix[0], shell->matrix) == -1)
+        path = ft_strjoin("/bin/", shell->matrix[0]);
+        if (execve(path, shell->matrix, shell->env_var) == -1)
         {
             perror("execvp");
             exit(127);
@@ -117,9 +119,6 @@ int ft_check_cmd(t_minishell *shell)
     else
         status = ft_execute_bin(shell);
     return (status);
-    // else
-    //     status = ft_write_error(shell->matrix[0]);
-    // return (status);
 }
 
 void ft_read_inputs(t_minishell *shell)

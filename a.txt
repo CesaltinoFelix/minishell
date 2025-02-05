@@ -1,0 +1,12 @@
+a
+a.txt
+builtins
+libft
+main.c
+Makefile
+minishell
+minishell.h
+README.md
+redirTest
+tokens
+utils
