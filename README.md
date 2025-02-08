@@ -190,3 +190,13 @@ Faz todos os testes usando o valgrind e vai saindo do programa pra ver se tem le
     echo $fdasfwed32r43wr2rferfrefewe
     Sair pra verificar leak.
 
+
+
+#### COMPORTAMENTOS INESPERADOS
+
+minishell> tail -n 5 teste.txt
+felix
+cesaltino
+eymar
+domingos
+paiminishells
