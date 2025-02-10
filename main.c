@@ -132,7 +132,8 @@ void ft_read_inputs(t_minishell *shell)
     {
         ft_expand_var(&shell->input);
         shell->matrix = ft_get_matrix(shell);
-        ft_handle_redirections(shell);
+        if (ft_handle_redirections(shell) == -1)
+        return;
         ft_check_cmd(shell);
         ft_restore_stdout(shell);
     }
