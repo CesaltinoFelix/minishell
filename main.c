@@ -132,7 +132,9 @@ void ft_read_inputs(t_minishell *shell)
     {
         ft_expand_var(&shell->input);
         shell->matrix = ft_get_matrix(shell);
+        ft_handle_redirections(shell);
         ft_check_cmd(shell);
+        ft_restore_stdout(shell);
     }
 }
 char *trim_whitespace(char *str)

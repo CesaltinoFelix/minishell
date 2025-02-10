@@ -3,7 +3,8 @@
         "minishell.h": "c",
         "history.h": "c",
         "libft.h": "c",
-        "readline.h": "c"
+        "readline.h": "c",
+        "unistd.h": "c"
     },
     "functionHeaderExtension.headerFilePath": "/home/playboy7xb/minishell/minishell.h"
 }

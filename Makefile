@@ -13,7 +13,8 @@ SRCS =	main.c \
 	./builtins/ft_export.c \
 	./builtins/ft_unset.c \
 	./builtins/ft_env.c \
-	./builtins/ft_exit.c 
+	./builtins/ft_exit.c \
+	./redirections/ft_redirections.c
 
 OBJS = $(SRCS:.c=.o)
 L_DIR = ./libft
