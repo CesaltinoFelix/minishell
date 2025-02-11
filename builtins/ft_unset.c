@@ -77,20 +77,25 @@ int ft_aux_unset(char **str)
 
 int ft_unset_aux2(t_minishell *shell, char ***new_env)
 {
-    int valid_count = count_valid_envs(shell);
+    int valid_count;
+    
+    valid_count = count_valid_envs(shell);
     *new_env = malloc(sizeof(char *) * (valid_count + 1));
-    return (*new_env == NULL) ? 1 : 0;
+    if (*new_env == NULL)
+        return (1);
+    return (0);
 }
 
 int ft_unset(t_minishell *shell)
 {
-    int i = -1;
-    int k = -1;
+    int i;
+    int k;
     char **new_env;
-
+    
+    i = -1;
+    k = -1;
     if (ft_aux_unset(shell->matrix) != 0 || ft_unset_aux2(shell, &new_env))
         return (1);
-
     while (shell->env_var[++i] != NULL)
     {
         if (!should_remove(shell->env_var[i], shell))
@@ -99,8 +104,6 @@ int ft_unset(t_minishell *shell)
             if (new_env[k] == NULL)
                 return (ft_free_matrix(new_env), 1);
         }
-        else
-            free(shell->env_var[i]);
     }
     new_env[k] = NULL;
     ft_free_matrix(shell->env_var);
