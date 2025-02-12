@@ -10,7 +10,6 @@ int ft_is_redirect(char c)
     return (c == '>' || c == '<');
 }
 
-// ✅ Contar tokens corretamente, separando redirecionadores (>, >>, <)
 static size_t count_tokens(const char *s, char c)
 {
     size_t count = 0;
@@ -38,10 +37,10 @@ static size_t count_tokens(const char *s, char c)
                 s++;
                 break;
             }
-            if (!quote && ft_is_redirect(*s)) // ✅ Conta ">" e "<" como tokens
+            if (!quote && ft_is_redirect(*s))
             {
                 count++;
-                if (*(s + 1) == *s) // >> ou <<
+                if (*(s + 1) == *s)
                     s++;
                 s++;
                 break;
@@ -54,15 +53,14 @@ static size_t count_tokens(const char *s, char c)
     return count;
 }
 
-// ✅ Pegar tokens corretamente, separando operadores (>, >>, <)
 static void ft_get_start_len(const char *s, char c, const char **start, size_t *len)
 {
     char quote = 0;
     *start = s;
 
-    if (ft_is_redirect(*s)) // ✅ Se for redirecionador, captura separado
+    if (ft_is_redirect(*s))
     {
-        if (*(s + 1) == *s) // >> ou <<
+        if (*(s + 1) == *s)
             *len = 2;
         else
             *len = 1;
@@ -81,7 +79,7 @@ static void ft_get_start_len(const char *s, char c, const char **start, size_t *
             quote = 0;
             s++;
         }
-        else if (!quote && ft_is_redirect(*s)) // ✅ Se encontra >, >> ou <, para aqui
+        else if (!quote && ft_is_redirect(*s))
             break;
         else if (*s == c && !quote)
             break;
@@ -91,7 +89,6 @@ static void ft_get_start_len(const char *s, char c, const char **start, size_t *
     *len = s - *start;
 }
 
-// ✅ Preenchendo a matriz corretamente
 static void ft_fill_matrix(const char *s, char c, char **result, size_t *i)
 {
     const char *start;
