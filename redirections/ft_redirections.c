@@ -1,7 +1,5 @@
 #include "./../minishell.h"
 
-#include "../minishell.h"
-
 static int	ft_handle_output_redir(t_minishell *shell, int i)
 {
 	int		fd;
