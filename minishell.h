@@ -42,6 +42,7 @@ typedef struct s_minishell
         char    *current_path;
         int last_exit_code;
         int stdout_backup;
+        int stdin_backup;
 } t_minishell;
 
 
@@ -69,7 +70,7 @@ int     ft_export(t_minishell *shell);
 int     ft_strlen_unquote(const char *str);
 int     is_valid_identifier(const char *str);
 int ft_handle_redirections(t_minishell *shell);
-void ft_restore_stdout(t_minishell *shell);
+void ft_restore_stdio(t_minishell *shell);
 int     ft_strcpy_unquote(char *dest, const char *src, int size);
 
 #endif

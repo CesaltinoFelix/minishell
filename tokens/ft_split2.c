@@ -1,39 +1,52 @@
 #include "../minishell.h"
 
-// Função para verificar se um caractere é uma aspa (simples ou dupla)
 int ft_check_chr(char c)
 {
     return (c == '"' || c == '\'');
 }
 
-// Função para contar o número de tokens na string
+int ft_is_redirect(char c)
+{
+    return (c == '>' || c == '<');
+}
+
+// ✅ Contar tokens corretamente, separando redirecionadores (>, >>, <)
 static size_t count_tokens(const char *s, char c)
 {
     size_t count = 0;
-    char quote = 0; // Rastreia o tipo de aspa atual
+    char quote = 0;
 
     while (*s)
     {
-        if (*s == c && !quote) // Ignora delimitadores fora de aspas
+        if (*s == c && !quote)
         {
             s++;
             continue;
         }
         count++;
-        if (ft_check_chr(*s) && !quote) // Inicia uma aspa
+
+        if (ft_check_chr(*s) && !quote)
         {
             quote = *s;
             s++;
         }
-        while (*s) // Avança até o fim do token
+        while (*s)
         {
-            if (ft_check_chr(*s) && *s == quote) // Fecha a aspa
+            if (ft_check_chr(*s) && *s == quote)
             {
                 quote = 0;
                 s++;
                 break;
             }
-            if (*s == c && !quote) // Encontrou um delimitador fora de aspas
+            if (!quote && ft_is_redirect(*s)) // ✅ Conta ">" e "<" como tokens
+            {
+                count++;
+                if (*(s + 1) == *s) // >> ou <<
+                    s++;
+                s++;
+                break;
+            }
+            if (*s == c && !quote)
                 break;
             s++;
         }
@@ -41,25 +54,36 @@ static size_t count_tokens(const char *s, char c)
     return count;
 }
 
-// Função para obter o início e o comprimento de um token
+// ✅ Pegar tokens corretamente, separando operadores (>, >>, <)
 static void ft_get_start_len(const char *s, char c, const char **start, size_t *len)
 {
-    char quote = 0; // Rastreia o tipo de aspa atual
+    char quote = 0;
     *start = s;
+
+    if (ft_is_redirect(*s)) // ✅ Se for redirecionador, captura separado
+    {
+        if (*(s + 1) == *s) // >> ou <<
+            *len = 2;
+        else
+            *len = 1;
+        return;
+    }
 
     while (*s)
     {
-        if (ft_check_chr(*s) && !quote) // Inicia uma aspa
+        if (ft_check_chr(*s) && !quote)
         {
             quote = *s;
             s++;
         }
-        else if (ft_check_chr(*s) && *s == quote) // Fecha a aspa
+        else if (ft_check_chr(*s) && *s == quote)
         {
             quote = 0;
             s++;
         }
-        else if (*s == c && !quote) // Encontrou um delimitador fora de aspas
+        else if (!quote && ft_is_redirect(*s)) // ✅ Se encontra >, >> ou <, para aqui
+            break;
+        else if (*s == c && !quote)
             break;
         else
             s++;
@@ -67,7 +91,7 @@ static void ft_get_start_len(const char *s, char c, const char **start, size_t *
     *len = s - *start;
 }
 
-// Função para preencher a matriz de tokens
+// ✅ Preenchendo a matriz corretamente
 static void ft_fill_matrix(const char *s, char c, char **result, size_t *i)
 {
     const char *start;
@@ -75,25 +99,23 @@ static void ft_fill_matrix(const char *s, char c, char **result, size_t *i)
 
     while (*s)
     {
-        if (*s == c) // Ignora delimitadores
+        if (*s == c)
         {
             s++;
             continue;
         }
-        ft_get_start_len(s, c, &start, &len); // Obtém o próximo token
-        result[(*i)++] = ft_strndup(start, len); // Adiciona o token à matriz
-        s = start + len; // Avança para o próximo caractere após o token
+        ft_get_start_len(s, c, &start, &len);
+        result[(*i)++] = ft_strndup(start, len);
+        s = start + len;
     }
 }
 
-// Função principal para dividir a string em tokens
 char **ft_split_quoted(const char *s, char c)
 {
     char **result;
     size_t i;
 
     i = 0;
-    result = NULL;
     if (!s)
         return NULL;
     result = malloc(sizeof(char *) * (count_tokens(s, c) + 1));

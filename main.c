@@ -135,7 +135,7 @@ void ft_read_inputs(t_minishell *shell)
         if (ft_handle_redirections(shell) == -1)
         return;
         ft_check_cmd(shell);
-        ft_restore_stdout(shell);
+        ft_restore_stdio(shell);
     }
 }
 char *trim_whitespace(char *str)
