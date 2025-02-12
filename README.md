@@ -1,202 +1,137 @@
-#   ERROS A SEREM TRATADOS
- -  minishell> echo \
-\
-Obs: quando digitamos "echo \" no bash, a comportamento padrao e ele esperar que mais alguma coisa seja digitada, mas na nossa versao ele imprimi logo o caracter
+# Minishell - Testes e Erros a Tratar
 
-R: isso e um erro porque as aspas nao estao fechadas.
+## 📌 Introdução
+Este documento tem como objetivo organizar e documentar os testes e correções implementadas no projeto Minishell. Atualmente, as funcionalidades pendentes incluem a implementação do pipe, algumas validações e a correção de vazamentos de memória.
 
-Faz todos os testes usando o valgrind e vai saindo do programa pra ver se tem leak. De preferência n testar muita coisa ao mesmo tempo, porque senão depois fica difícil saber qual dos comandos causou o leak.
+## 🔍 Testes a serem realizados
+Os testes devem ser comparados com o comportamento do bash padrão. Para cada teste, utilize o **valgrind** para verificar possíveis vazamentos de memória. Recomenda-se testar cada funcionalidade individualmente para identificar com precisão a origem de possíveis leaks.
 
-.Compile
-    Testes gerais no Makefile: compilador usado, checkar as flags, verificar relink e os targets mandatórios e afins.
+### 🛠️ Compilação
+- Verificar o **Makefile**:
+  - Compilador utilizado.
+  - Flags de compilação.
+  - Relink e targets obrigatórios.
+  
+### 🖥️ Comandos Simples e Variáveis Globais
+- Executar comandos sem argumentos:
+  ```sh
+  /bin/ls
+  /bin/clear
+  ```
+- Testar comando vazio (`""` ou `''`) e comparar com o bash.
+- Testar linha com apenas espaços ou tabs e verificar se são armazenados no histórico.
 
-.Simple Command & global variables
-    Executar comandos com caminho absoluto, mas sem opção or argumento. Exemplo: /bin/ls, /bin/clear, etc.
-    Checkar as variáveis globais, se tiverem usado, e garantir q n guardam outras informações para além do número do sinal recebido.
-    Testa um comando vazio: "" ou '' e compara com a saída do bash.
-    Testa linha com apenas espaços ou tabs e checka se estão a ser guardados no histórico.
-    Sair pra verificar leak.
+### 📜 Argumentos
+- Executar comandos com caminho absoluto e argumentos:
+  ```sh
+  /bin/ls -l
+  ```
 
-.Arguments
-    Executar comandos com caminho absoluto, agora com opções e argumentos, mas sem aspas. Exemplo: /bin/ls -l, etc.
-    Sair pra verificar leak.
+### 🗣️ Echo
+Comparar todas as saídas com o bash:
+```sh
+echo
+echo ''
+echo ""
+echo 'echo'
+echo "echo"
+echo -n
+echo -nnnn felix
+echo eymar'felix'"eymar"luanda
+echo $USER
+echo '$USER'
+echo "\$USER"
+echo $
+echo $@ $@@ $@@@@
+```
 
-.echo
-    Aqui é só ir comparando tudo com o bash:
-        echo
-        'echo'
-        "echo"
-        "'echo'"
-        '"echo"'
-        'echo '
-        " echo"
-        echo eymar felix
-        echo 'eymar              "           ' felix
-        echo "                 eymar   '                      " felix
-        echo '       eymar             ' felix "
-        echo "       eymar             " felix '
-        echo eymar'felix'
-        echo eymar'felix'"eymar"luanda
-        echo eymar"felix""felix"42''
-        echo eymar'felix'"eymar"'                   '42
-        echo -n
-        echo -
-        echo -nnnnnnnn -n -n -nnnn felix
-        echo -nnnnnnnn -n -n - -nnnn eymarrr
-        echo -nnnnnnnn -n "-n" -nnnn felixx
-        echo -nnnnnnnn -n "-n " -nnnn eymar
-        echo -nnnnnnnn -n -nm -nnnn felix
-    Sair pra verificar leak.
+### 🚪 Exit
+Testar diferentes valores de saída e verificar o `echo $?`:
+```sh
+exit
+exit ""
+exit -1
+exit 0
+exit 1
+exit 9223372036854775807
+exit a
+echo $?
+```
 
-.exit
-    Aqui é só ir comparando tudo com o bash e sempre checkar o estado com que o programa terminou, usando echo $?:
-        exit
-        exit ""
-        exit -9223372036854775809
-        exit -9223372036854775808
-        exit -1
-        exit 0
-        exit 1
-        exit 9223372036854775807
-        exit 9223372036854775808
-        exit a
-        exit a a
-        exit 1 1
-        exit 1 a
-        exit a 1
-        exit 123a 
-        exit 123a a
-        exit '                        +1'
-        exit '                        -1'
-        exit '                        +1 '
-        exit '                        -1 '
-        exit '                        +-1'
-    Sair pra verificar leak.
+### 🔄 Status de Retorno de Processos
+Após cada comando, verificar o exit status com `echo $?`.
 
-.Return value of a process
-    Essa parte é só pra saber se o exit status dos comando está correcto, então é bwé chato tentar testar ele só, por isso é melhor irem testando enquanto estão a testar os comandos, faz ais sentido.
-    É só depois do comando, dar um echo $? e compara com a saída do bash tbm.
-    Sair pra verificar leak.
+### 🚦 Sinais
+- Testar `Ctrl-C`, `Ctrl-D` e verificar o `echo $?` (deve ser `130`).
 
-.Signals
-    Essa parte os testes já estão mesmo lá, é só fazer e comparar com o bash tbm.
-    Faz ctrl-C, depois ctrl-D e depois checka o exit status, usando echo $? tem q ser 130 e não 0
-    Sair pra verificar leak.
+### 📝 Aspas Duplas e Simples
+Verificar se pipes e redirecionamentos dentro de aspas são tratados como argumentos:
+```sh
+echo "cat lol.c | cat > lol.c"
+echo '>' aaa
+echo '$USER'
+```
 
-.Double Quotes
-    Compara tbm com o bash, se o pipe ou redir estiver dentro de aspas, ele tem q ser considerado argumento do comando e perde o seu 'poder'
-    echo "cat lol.c | cat > lol.c"
-    echo something '>' aaa
-    echo something '|' cat
-    cat ""
-    Sair pra verificar leak.
+### 🌍 Variáveis de Ambiente
+```sh
+env
+env 42
+export
+echo $USER
+export a='test'
+unset a
+```
 
-.Single Quotes
-    Aqui a cena dos pipes e redis tbm se aplica e tbm, podes testar, se quiseres
-    echo '$USER'
-    echo '$'
-    echo '$ '
-    echo ' $'
-    cat ''
-    Sair pra verificar leak.
+### 📂 Comando CD
+```sh
+cd
+cd ..
+cd .
+cd pasta_existente
+cd pasta_inexistente
+```
 
-.env
-    env
-    env 42
-    Sair pra verificar leak.
+### 📌 PWD
+```sh
+pwd
+pwd sss
+```
 
-.export
-    Aqui tbm é importante ires comparando mesmo com o bash
-    export
-    export ''
-    export a (e de seguida echo $a)
-    export a b c
-    export a=
-    export a=====
-    export a=eymar
-    export a='eymar felix' (e de seguida echo $a)
-    export a='edson "          " finda' (e de seguida echo $a)
-    export a -oi 9mm _obs 
-    Sair pra verificar leak.
+### 📁 Caminhos Relativos e PATH
+Testar comandos comuns como `ls`, `touch`, `wc`.
 
-.unset
-    unset
-    unset a b c (a b c sendo variáveis existentes)
-    unset a b c (a b c sendo variáveis inexistentes)
-    unset a b c (a b c apenas b existe)
-    unset a b c (a b c apenas b n existente)
-    unset PWD OLDPWD (e de seguida cd e depois env pra ver se foram recreadas)
-    Sair pra verificar leak.
+### ➡️ Redirecionamento
+Testar redirecionamentos simples e duplos:
+```sh
+echo edson >
+< file_existente
+<<
+echo edson > a baptista > b finda > c
+```
 
-.cd
-    cd
-    cd pasta_existente pasta_existente
-    cd ..
-    cd .
-    cd pasta_existente (e depois env pra checkar se as variavéis de ambiente PWD e OLDPWD foram actualizadas)
-    cd pasta_existente_sem_permissão
-    cd pasta_inexistente
-    Sair pra verificar leak.
+### | Pipes
+- Verificar syntax errors, pipe no início e no fim da linha.
 
-.pwd
-    pwd
-    pwd sss
+### 🔀 Casos Especiais
+Testar cenários inesperados e comandos sequenciais:
+```sh
+cat | cat | ls
+echo $USER$USER
+```
 
-.Relative Path
-    Essa parte é só testar mesmo comandos como ls, touch, wc e tals
+## 🚀 Alterações e Melhorias Implementadas
+✅ Implementação de comandos básicos.
+✅ Suporte a variáveis de ambiente.
+✅ Expansão de variáveis (`$USER`, `$@`, `$?`).
+✅ Suporte a aspas simples e duplas.
+✅ Tratamento de `Ctrl-C` e `Ctrl-D`.
+✅ Melhorias na estrutura de dados.
+✅ Correção de alguns vazamentos de memória.
 
-.Environment Path
-    Essa parte já tem la a explicação do q fazer
+## ❗ Próximos Passos
+🔲 Implementar pipes (`|`).
+🔲 Melhorar validações de entrada.
+🔲 Corrigir vazamentos de memória.
 
-.Redirection
-    Aqui é só mesmo testar os redirs e ir comparando com o bash
-    Testa redir sem file:
-        echo edson >
-        < file_existente
-        <<
-    Testa redirs em linhas de comando desorganizadas:
-        echo edson > file baptista finda
-        echo edson > a baptista > b finda > c
-    Testa redirs pra files sem permissão, pastas e tals
-    E aqui o << tem q ser muito bem testado:
-        Testa se as variáveis estão a ser expandidas dentro dele, n importando se estão dentro de ' ou ".
-        Testa ctrl-C e ctrl-D dentro dele tbm.
-        Testa com delimitador do tipo 'a ' ou 'a b' e sem delimitador tbm
-    Sair pra verificar leak.
-    
-.Pipes
-    Aqui é mesmo só testes de syntax, tipo pipe seguido de redir e o crlh
-    Pipe na primeira posição da linha 
-    Pipe na última posição tem que abrir o herepipe 
-    Sair pra verificar leak.
-
-.Go Crazy and history
-    Aqui eu só testo mesmo esse q vem lá, 'cat | cat | ls'
-
-.Environment variables
-    Comparar tudo com o bash
-    echo "$USER"
-    echo "$USER$USER"
-    echo "$USER "
-    echo $"USER"
-    echo "$"USER
-    echo $'USER'
-    echo '$USER'
-    echo '$'USER
-    echo $@
-    echo $@@
-    echo $@@@@
-    echo $
-    echo $fdasfwed32r43wr2rferfrefewe
-    Sair pra verificar leak.
-
-
-
-#### COMPORTAMENTOS INESPERADOS
-
-minishell> tail -n 5 teste.txt
-felix
-cesaltino
-eymar
-domingos
-paiminishells
+---
+Este documento será atualizado conforme o progresso do projeto. Continue testando e comparando com o bash para garantir um comportamento fiel ao original!
