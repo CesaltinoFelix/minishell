@@ -43,6 +43,8 @@ typedef struct s_minishell
         int last_exit_code;
         int stdout_backup;
         int stdin_backup;
+		int	has_redirect_in;
+		int	has_redirect_out;
 } t_minishell;
 
 

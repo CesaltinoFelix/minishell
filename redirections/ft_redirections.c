@@ -13,6 +13,7 @@ static int	ft_handle_output_redir(t_minishell *shell, int i)
 	fd = open(shell->matrix[i + 1], flags, 0644);
 	if (fd == -1)
 		return (perror("Erro ao abrir arquivo"), -1);
+	shell->stdout_backup = dup(STDOUT_FILENO);
 	if (dup2(fd, STDOUT_FILENO) == -1)
 		return (perror("Erro ao redirecionar saída"), close(fd), -1);
 	close(fd);
@@ -28,6 +29,7 @@ static int	ft_handle_input_redir(t_minishell *shell, int i)
 	fd = open(shell->matrix[i + 1], O_RDONLY);
 	if (fd == -1)
 		return (perror("Erro ao abrir arquivo"), -1);
+	shell->stdin_backup = dup(STDIN_FILENO);
 	if (dup2(fd, STDIN_FILENO) == -1)
 		return (perror("Erro ao redirecionar entrada"), close(fd), -1);
 	close(fd);
