@@ -44,6 +44,9 @@ void init_shell(t_minishell *shell, char *env[])
     shell->old_path = NULL;
     shell->current_path = NULL;
     shell->last_exit_code = 0;
+	shell->stdout_backup = dup(STDOUT_FILENO);
+	shell->stdin_backup = dup(STDIN_FILENO);
+
 }
 
 char **ft_get_matrix(t_minishell *shell)
@@ -133,7 +136,7 @@ void ft_read_inputs(t_minishell *shell)
         ft_expand_var(&shell->input);
         shell->matrix = ft_get_matrix(shell);
         if (ft_handle_redirections(shell) == -1)
-        return;
+        	return;
         ft_check_cmd(shell);
         ft_restore_stdio(shell);
     }
