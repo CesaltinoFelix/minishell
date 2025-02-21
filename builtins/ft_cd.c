@@ -46,10 +46,10 @@ int ft_cd(t_minishell *shell)
    if (shell->matrix[1] == NULL)
    {
       if (change_to_home(shell) == 1)
-         return (1);
+         return (2);
    }
    else if (shell->matrix[2] != NULL)
-      return (printf("minishell: cd: too many arguments\n"), 1);
+      return (printf("minishell: cd: too many arguments\n"), 2);
    else if (chdir(shell->matrix[1]) == 0)
    {
       shell->current_path = getcwd(buf, sizeof(buf));
@@ -58,7 +58,7 @@ int ft_cd(t_minishell *shell)
    else
    {
       printf("minishell: cd: %s: No such file or directory\n", shell->matrix[1]);
-      return (1);
+      return (2);
    }
    return (0);
 }

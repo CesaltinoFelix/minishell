@@ -8,7 +8,7 @@ int ft_env(t_minishell *shell)
         if (shell->matrix[1] != NULL)
         {
                 printf("error: has option or argument\n");
-                return (1);
+                return (2);
         }
         else
         {

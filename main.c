@@ -41,9 +41,11 @@ void init_shell(t_minishell *shell, char *env[])
     shell->env_var = ft_cpy_env(env);
     shell->input = NULL;
     shell->matrix = NULL;
+    shell->sv_path = NULL;
     shell->old_path = NULL;
     shell->current_path = NULL;
     shell->last_exit_code = 0;
+    shell->status = 0;
 	shell->stdout_backup = dup(STDOUT_FILENO);
 	shell->stdin_backup = dup(STDIN_FILENO);
 
@@ -66,64 +68,89 @@ char **ft_get_matrix(t_minishell *shell)
     return (shell->matrix);
 }
 
-int ft_write_error(char *str)
+void ft_write_error(char *str)
 {
     while (*str)
         write(2, str++, 1);
     ft_putendl_fd(": command not found", 2);
-    return (2);
 }
 
 int ft_execute_bin(t_minishell *shell)
 {
     pid_t pid;
-    char *path;
-    int status;
-
+    char *path = NULL;
+    int i = -1;
+    int exec_ = 0;
     pid = fork();
     if (pid == -1)
-    {
-        perror("fork");
-        return (1);
-    }
+        return (perror("fork"), 1);
     if (pid == 0)
     {
-        path = ft_strjoin("/bin/", shell->matrix[0]);
-        if (execve(path, shell->matrix, shell->env_var) == -1)
+        path = getenv("PATH");
+        shell->sv_path = ft_split(path, ':');
+        while (shell->sv_path[++i])
         {
-            perror("execvp");
+            ft_strcat(shell->sv_path[i], "/");
+            path = ft_strjoin(shell->sv_path[i], shell->matrix[0]);
+            if (execve(path, shell->matrix, shell->env_var) != -1)
+                exec_ = 1;
+        }
+        if (!exec_)
+        {
+            ft_write_error(shell->matrix[0]);
             exit(127);
         }
     }
     else
-        waitpid(pid, &status, 0);
-    return (WEXITSTATUS(status));
+        waitpid(pid, &shell->status, 0);
+    return (WEXITSTATUS(shell->status));
 }
 
 int ft_check_cmd(t_minishell *shell)
 {
-    int status;
-
-    status = 0;
+    
     if (ft_strcmp(shell->matrix[0], "echo") == 0)
-        status = ft_echo(shell);
+    shell->status = ft_echo(shell);
     else if (ft_strcmp(shell->matrix[0], "cd") == 0)
-        status = ft_cd(shell);
+        shell->status = ft_cd(shell);
     else if (ft_strcmp(shell->matrix[0], "pwd") == 0)
-        status = ft_pwd();
+        shell->status = ft_pwd(shell);
     else if (ft_strcmp(shell->matrix[0], "export") == 0)
-        status = ft_export(shell);
+        shell->status = ft_export(shell);
     else if (ft_strcmp(shell->matrix[0], "unset") == 0)
-        status = ft_unset(shell);
+        shell->status = ft_unset(shell);
     else if (ft_strcmp(shell->matrix[0], "env") == 0)
-        status = ft_env(shell);
+        shell->status = ft_env(shell);
     else if (ft_strcmp(shell->matrix[0], "exit") == 0)
         ft_exit(shell);
     else
-        status = ft_execute_bin(shell);
-    return (status);
+        shell->status = ft_execute_bin(shell);
+    return (shell->status);
 }
 
+int ft_check_escape(char *str)
+{
+    int i;
+    int count_chr;
+
+    i = -1;
+    count_chr = 0;
+    while (str[++i])
+    {
+        if (str[i] == '\\')
+            count_chr++;
+    }
+    return (count_chr);
+}
+void ft_replace_in(char **input)
+{
+    int total_chr = ft_check_escape(*input);
+    
+    if (total_chr % 2 == 0)
+        *input += total_chr / 2;
+    else
+        *input += (total_chr / 2 ) + (total_chr % 2);
+}
 void ft_read_inputs(t_minishell *shell)
 {
     if (ft_check_quote(shell->input) == -1)
@@ -133,11 +160,16 @@ void ft_read_inputs(t_minishell *shell)
     }
     else
     {
-        ft_expand_var(&shell->input);
+        if (ft_check_escape(shell->input) % 2 == 0)
+            ft_expand_var(&shell->input);
+        ft_replace_in(&shell->input);
         shell->matrix = ft_get_matrix(shell);
         if (ft_handle_redirections(shell) == -1)
         	return;
-        ft_check_cmd(shell);
+        if (ft_check_cmd(shell) == 0)
+            printf("status %d\n", shell->status);
+        else
+            printf("status %d\n", shell->status);
         ft_restore_stdio(shell);
     }
 }

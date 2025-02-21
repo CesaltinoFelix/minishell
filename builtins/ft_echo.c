@@ -40,9 +40,11 @@ void    ft_aux_echo(t_minishell *shell, int *i)
 
 int ft_echo(t_minishell *shell)
 {
-    int i = 1;
-    int new_line = 1;
-
+    int i;
+    int new_line;
+    
+    i = 1;
+    new_line = 1;
     if (ft_echo_with_n(shell) == 0)
     {
        new_line = 0;

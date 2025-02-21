@@ -95,14 +95,14 @@ int ft_unset(t_minishell *shell)
     i = -1;
     k = -1;
     if (ft_aux_unset(shell->matrix) != 0 || ft_unset_aux2(shell, &new_env))
-        return (1);
+        return (2);
     while (shell->env_var[++i] != NULL)
     {
         if (!should_remove(shell->env_var[i], shell))
         {
             new_env[++k] = ft_strdup(shell->env_var[i]);
             if (new_env[k] == NULL)
-                return (ft_free_matrix(new_env), 1);
+                return (ft_free_matrix(new_env), 2);
         }
     }
     new_env[k] = NULL;

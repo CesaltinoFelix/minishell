@@ -154,7 +154,7 @@ int ft_export(t_minishell *shell)
                 free(shell->env.value);
             }
             else
-                print_error(shell->matrix[i]);
+                return (print_error(shell->matrix[i]), 2);
             i++;
         }
     }

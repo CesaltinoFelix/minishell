@@ -37,14 +37,16 @@ typedef struct s_minishell
         t_exp exp;
         char *input;
         char **matrix;
+        char    **sv_path;
         char **env_var;
         char    *old_path;
         char    *current_path;
+        int status;
         int last_exit_code;
         int stdout_backup;
         int stdin_backup;
-		int	has_redirect_in;
-		int	has_redirect_out;
+        int	has_redirect_in;
+        int	has_redirect_out;
 } t_minishell;
 
 
@@ -62,7 +64,7 @@ char    *ft_strndup(const char *s, size_t len);
 char    **ft_split_quoted(const char *s, char c) ;
 char    **ft_copy_matrix(char **matrix, int size);
 
-int     ft_pwd();
+int     ft_pwd(t_minishell *shell);
 int     ft_cd(t_minishell *shell);
 int     ft_check_quote(char *str);
 int     ft_env(t_minishell *shell);
