@@ -64,6 +64,8 @@ char    *ft_strndup(const char *s, size_t len);
 char    **ft_split_quoted(const char *s, char c) ;
 char    **ft_copy_matrix(char **matrix, int size);
 
+
+int     ft_check_escape(char *str, char *pos);
 int     ft_pwd(t_minishell *shell);
 int     ft_cd(t_minishell *shell);
 int     ft_check_quote(char *str);

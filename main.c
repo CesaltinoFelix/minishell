@@ -108,7 +108,6 @@ int ft_execute_bin(t_minishell *shell)
 
 int ft_check_cmd(t_minishell *shell)
 {
-    
     if (ft_strcmp(shell->matrix[0], "echo") == 0)
     shell->status = ft_echo(shell);
     else if (ft_strcmp(shell->matrix[0], "cd") == 0)
@@ -128,29 +127,29 @@ int ft_check_cmd(t_minishell *shell)
     return (shell->status);
 }
 
-int ft_check_escape(char *str)
+int ft_check_escape(char *str, char *pos)
 {
-    int i;
-    int count_chr;
-
-    i = -1;
-    count_chr = 0;
-    while (str[++i])
-    {
-        if (str[i] == '\\')
-            count_chr++;
-    }
-    return (count_chr);
-}
-void ft_replace_in(char **input)
-{
-    int total_chr = ft_check_escape(*input);
+    int count_escape;
     
-    if (total_chr % 2 == 0)
-        *input += total_chr / 2;
-    else
-        *input += (total_chr / 2 ) + (total_chr % 2);
+    count_escape = 0;
+    while (pos > str && *(pos - 1) == '\\')
+    {
+        count_escape++;
+        pos--;
+    }
+    return (count_escape);
 }
+
+// void ft_replace_in(char **input)
+// {
+//     int total_chr;
+    
+//     total_chr = ft_check_escape(*input);
+//     if (total_chr % 2 == 0)
+//         *input += total_chr / 2;
+//     else
+//         *input += (total_chr / 2 ) + (total_chr % 2);
+// }
 void ft_read_inputs(t_minishell *shell)
 {
     if (ft_check_quote(shell->input) == -1)
@@ -160,9 +159,8 @@ void ft_read_inputs(t_minishell *shell)
     }
     else
     {
-        if (ft_check_escape(shell->input) % 2 == 0)
-            ft_expand_var(&shell->input);
-        ft_replace_in(&shell->input);
+        ft_expand_var(&shell->input);
+        // ft_replace_in(&shell->input);
         shell->matrix = ft_get_matrix(shell);
         if (ft_handle_redirections(shell) == -1)
         	return;
