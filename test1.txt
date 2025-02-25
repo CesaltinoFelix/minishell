@@ -1,1 +1,0 @@
-angola e um pais a.txt > test2.txt b.txt
