@@ -3,8 +3,10 @@ CC = cc
 CFLAGS =  -Wall -Wextra -Werror -lreadline -lhistory
 SRCS =	main.c \
 	./utils/ft_free.c \
+	./utils/ft_utils.c \
 	./utils/ft_signals.c \
 	./utils/ft_expand_var.c \
+	./utils/ft_export_utils.c \
 	./tokens/ft_split2.c \
 	./tokens/ft_token_utils.c \
 	./builtins/ft_echo.c \
@@ -14,6 +16,7 @@ SRCS =	main.c \
 	./builtins/ft_unset.c \
 	./builtins/ft_env.c \
 	./builtins/ft_exit.c \
+	./utils/ft_manipulation_str.c \
 	./redirections/ft_redirections.c
 
 OBJS = $(SRCS:.c=.o)

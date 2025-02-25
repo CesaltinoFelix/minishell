@@ -1,124 +1,127 @@
 #include "../minishell.h"
 
-int ft_check_chr(char c)
+int is_quote(char c)
 {
     return (c == '"' || c == '\'');
 }
 
-int ft_is_redirect(char c)
+int is_redirection(char c)
 {
     return (c == '>' || c == '<');
 }
 
-static size_t count_tokens(const char *s, char c)
+void process_token(const char **input, char *quote, char delimiter, size_t *count)
+{
+    while (**input)
+    {
+        if (is_quote(**input) && **input == *quote)
+        {
+            *quote = 0;
+            (*input)++;
+            break;
+        }
+        if (*quote == 0 && is_redirection(**input))
+        {
+            (*count)++;
+            if (*(*input + 1) == **input)
+                (*input)++;
+            (*input)++;
+            break;
+        }
+        if (**input == delimiter && *quote == 0)
+            break;
+        (*input)++;
+    }
+}
+
+size_t count_tokens(const char *input, char delimiter)
 {
     size_t count = 0;
     char quote = 0;
 
-    while (*s)
+    while (*input)
     {
-        if (*s == c && !quote)
+        if (*input == delimiter && quote == 0)
         {
-            s++;
+            input++;
             continue;
         }
         count++;
-
-        if (ft_check_chr(*s) && !quote)
+        if (is_quote(*input) && quote == 0)
         {
-            quote = *s;
-            s++;
+            quote = *input;
+            input++;
         }
-        while (*s)
-        {
-            if (ft_check_chr(*s) && *s == quote)
-            {
-                quote = 0;
-                s++;
-                break;
-            }
-            if (!quote && ft_is_redirect(*s))
-            {
-                count++;
-                if (*(s + 1) == *s)
-                    s++;
-                s++;
-                break;
-            }
-            if (*s == c && !quote)
-                break;
-            s++;
-        }
+        process_token(&input, &quote, delimiter, &count);
     }
-    return count;
+    return (count);
 }
 
-static void ft_get_start_len(const char *s, char c, const char **start, size_t *len)
+void skip_token(const char **input, char *quote, char delimiter)
+{
+    while (**input)
+    {
+        if (is_quote(**input) && *quote == 0)
+        {
+            *quote = **input;
+            (*input)++;
+        }
+        else if (is_quote(**input) && **input == *quote)
+        {
+            *quote = 0;
+            (*input)++;
+        }
+        else if (*quote == 0 && (is_redirection(**input) || **input == delimiter))
+            break;
+        else
+            (*input)++;
+    }
+}
+
+static size_t get_token_bounds(const char *input, char delimiter)
 {
     char quote = 0;
-    *start = s;
+    const char *start = input;
 
-    if (ft_is_redirect(*s))
-    {
-        if (*(s + 1) == *s)
-            *len = 2;
-        else
-            *len = 1;
-        return;
-    }
+    if (is_redirection(*input))
+        return (*(input + 1) == *input) ? 2 : 1;
 
-    while (*s)
-    {
-        if (ft_check_chr(*s) && !quote)
-        {
-            quote = *s;
-            s++;
-        }
-        else if (ft_check_chr(*s) && *s == quote)
-        {
-            quote = 0;
-            s++;
-        }
-        else if (!quote && ft_is_redirect(*s))
-            break;
-        else if (*s == c && !quote)
-            break;
-        else
-            s++;
-    }
-    *len = s - *start;
+    skip_token(&input, &quote, delimiter);
+    return input - start;
 }
 
-static void ft_fill_matrix(const char *s, char c, char **result, size_t *i)
+static void fill_token_array(const char *input, char delimiter, char **tokens, size_t *index)
 {
-    const char *start;
-    size_t len;
+    size_t length;
 
-    while (*s)
+    while (*input)
     {
-        if (*s == c)
+        if (*input == delimiter)
         {
-            s++;
+            input++;
             continue;
         }
-        ft_get_start_len(s, c, &start, &len);
-        result[(*i)++] = ft_strndup(start, len);
-        s = start + len;
+        length = get_token_bounds(input, delimiter);
+        tokens[(*index)++] = ft_strndup(input, length);
+        input += length;
     }
 }
 
-char **ft_split_quoted(const char *s, char c)
+char **ft_split_quoted(const char *input, char delimiter)
 {
-    char **result;
-    size_t i;
+    if (!input)
+        return NULL;
+    size_t index;
+    size_t token_count;
+    char **tokens;
 
-    i = 0;
-    if (!s)
+    index = 0;
+    token_count = count_tokens(input, delimiter);
+    tokens = malloc(sizeof(char *) * (token_count + 1));
+    if (!tokens)
         return NULL;
-    result = malloc(sizeof(char *) * (count_tokens(s, c) + 1));
-    if (!result)
-        return NULL;
-    ft_fill_matrix(s, c, result, &i);
-    result[i] = NULL;
-    return result;
+    fill_token_array(input, delimiter, tokens, &index);
+    tokens[index] = NULL;
+    return tokens;
 }
+

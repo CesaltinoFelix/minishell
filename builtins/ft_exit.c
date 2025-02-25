@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-int ft_is_numeric(const char *str)
+int is_valid_numeric_argument(const char *str)
 {
     if (!str || !*str)
         return 0;
@@ -12,31 +12,33 @@ int ft_is_numeric(const char *str)
             return 0;
         str++;
     }
-    return (2);
+    return (1);
 }
 
-void ft_exit(t_minishell *shell)
+void handle_exit_command(t_minishell *shell)
 {
-    int exit_code;
-    
-    exit_code = shell->last_exit_code;
+    long numeric_exit_code;
+
     printf("exit\n");
-    if (shell->matrix && shell->matrix[1])
+    if (shell->matrix[1])
     {
-        if (!ft_is_numeric(shell->matrix[1]))
+        if (!is_valid_numeric_argument(shell->matrix[1]))
         {
             printf("minishell: exit: %s: numeric argument required\n", shell->matrix[1]);
-            exit_code = 255;
+            shell->status = 2;
         }
         else if (shell->matrix[2])
         {
-            perror("minishell: exit: too many arguments\n");
-            shell->last_exit_code = 1;
+            printf("minishell: exit: too many arguments\n");
+            shell->status = 1;
             return;
         }
         else
-            exit_code = ft_atoi(shell->matrix[1]);
+        {
+            numeric_exit_code = ft_atoi(shell->matrix[1]);
+            shell->status = (numeric_exit_code & 255);
+        }
     }
     check_to_free(shell);
-    exit(exit_code);
+    exit(shell->status);
 }

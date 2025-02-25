@@ -1,64 +1,53 @@
 #include "../minishell.h"
 
-void update_env_vars(t_minishell *shell, const char *key, const char *value)
+static void update_shell_env(t_minishell *shell, const char *key, const char *value)
 {
    shell->env.key = ft_strdup(key);
    shell->env.value = ft_strdup(value);
-   update_or_add_env(shell);
+   update_or_add_env_var(shell);
    free(shell->env.key);
    free(shell->env.value);
 }
 
-char *get_env_value(t_minishell *shell, const char *key)
+static int change_directory_to_home(t_minishell *shell)
 {
-   int i;
-   size_t key_len;
+   char *home_dir;
 
-   i = 0;
-   key_len = ft_strlen(key);
-   while (shell->env_var[i] != NULL)
+   home_dir = ft_getenv(shell, "HOME");
+   if (home_dir == NULL)
    {
-      if (ft_strncmp(shell->env_var[i], key, key_len) == 0 && shell->env_var[i][key_len] == '=')
-         return (&shell->env_var[i][key_len + 1]);
-      i++;
+      printf("minishell: cd: HOME not set\n");
+      return (1);
    }
-   return (NULL);
-}
-
-int change_to_home(t_minishell *shell)
-{
-   char *home_value;
-
-   home_value = get_env_value(shell, "HOME");
-   if (home_value == NULL)
-      return (printf("minishell: cd: HOME not set\n"), 1);
-   if (chdir(home_value) != 0)
+   if (chdir(home_dir) != 0)
       return (1);
    return (0);
 }
 
-int ft_cd(t_minishell *shell)
+int handle_cd_command(t_minishell *shell)
 {
-   char buf[128];
+   char current_dir[128];
+   const char *target_dir;
 
-   shell->old_path = getcwd(buf, sizeof(buf));
-   update_env_vars(shell, "OLDPWD", shell->old_path);
-   if (shell->matrix[1] == NULL)
+   shell->old_path = getcwd(current_dir, sizeof(current_dir));
+   update_shell_env(shell, "OLDPWD", shell->old_path);
+   target_dir = shell->matrix[1];
+   if (target_dir == NULL)
    {
-      if (change_to_home(shell) == 1)
-         return (2);
+      if (change_directory_to_home(shell) != 0)
+         return (1);
    }
    else if (shell->matrix[2] != NULL)
-      return (printf("minishell: cd: too many arguments\n"), 2);
-   else if (chdir(shell->matrix[1]) == 0)
    {
-      shell->current_path = getcwd(buf, sizeof(buf));
-      update_env_vars(shell, "PWD", shell->current_path);
+      printf("minishell: cd: too many arguments\n");
+      return (1);
    }
-   else
+   else if (chdir(target_dir) != 0)
    {
-      printf("minishell: cd: %s: No such file or directory\n", shell->matrix[1]);
-      return (2);
+      printf("minishell: cd: %s: No such file or directory\n", target_dir);
+      return (1);
    }
+   shell->current_path = getcwd(current_dir, sizeof(current_dir));
+   update_shell_env(shell, "PWD", shell->current_path);
    return (0);
 }

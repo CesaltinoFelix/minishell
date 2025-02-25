@@ -1,113 +1,66 @@
 #include "../minishell.h"
 
-static int compare_names(const char *s1, const char *s2)
+static int is_env_var_unset(char *var_name, t_minishell *shell)
 {
-    int i;
+    int i = 1;
 
-    i = 0;
-    while (s1[i] && s2[i] && s1[i] != '=' && s2[i] != '=')
+    while (shell->matrix[i])
     {
-        if (s1[i] != s2[i])
-            return (0);
-        i++;
-    }
-    if ((s1[i] == '=' || s1[i] == '\0') && (s2[i] == '=' || s2[i] == '\0'))
-        return (1);
-    return (0);
-}
-
-static int should_remove(char *env_var, t_minishell *shell)
-{
-    int i;
-    char *matrix_var;
-
-    i = 0;
-    while (shell->matrix[i] != NULL)
-    {
-        matrix_var = shell->matrix[i];
-        if (!is_valid_identifier(matrix_var))
-        {
-            i++;
-            continue;
-        }
-        if (compare_names(env_var, matrix_var))
-        {
-            if (ft_strchr(matrix_var, '=') == NULL)
-                return (1);
-            if (ft_strcmp(env_var, matrix_var) == 0)
-                return (1);
-        }
+        shell->env.key = shell->matrix[i];
+        if (is_env_var_match(var_name, shell->env.key, ft_strlen(shell->env.key)))
+            return (1);
         i++;
     }
     return (0);
 }
 
-static int count_valid_envs(t_minishell *shell)
+static int count_remaining_env_vars(t_minishell *shell)
 {
-    int i;
-    int count;
+    int count = 0;
+    int i = 0;
 
-    i = 0;
-    count = 0;
-    while (shell->env_var[i] != NULL)
+    while (shell->env_var[i])
     {
-        if (!should_remove(shell->env_var[i], shell))
+        if (!is_env_var_unset(shell->env_var[i], shell))
             count++;
         i++;
     }
     return (count);
 }
 
-int ft_aux_unset(char **str)
-{
-    int i;
-
-    i = 0;
-    while (str[i] != NULL)
-    {
-        if (!is_valid_identifier(str[i]))
-        {
-            printf("unset: `%s`: not a valid identifier\n", str[i]);
-            return (1);
-        }
-        i++;
-    }
-    return (0);
-}
-
-int ft_unset_aux2(t_minishell *shell, char ***new_env)
+static int allocate_new_env(t_minishell *shell, char ***new_env)
 {
     int valid_count;
     
-    valid_count = count_valid_envs(shell);
+    valid_count = count_remaining_env_vars(shell);
     *new_env = malloc(sizeof(char *) * (valid_count + 1));
-    if (*new_env == NULL)
-        return (1);
-    return (0);
+    return (*new_env == NULL);
 }
 
-int ft_unset(t_minishell *shell)
+int handle_unset_command(t_minishell *shell)
 {
-    int i;
-    int k;
+    int old_index;
+    int new_index;
     char **new_env;
-    
-    i = -1;
-    k = -1;
-    if (ft_aux_unset(shell->matrix) != 0 || ft_unset_aux2(shell, &new_env))
+
+    old_index = -1;
+    new_index = -1;
+    if (validate_unset_option(shell->matrix) || allocate_new_env(shell, &new_env))
         return (2);
-    while (shell->env_var[++i] != NULL)
+    while (shell->env_var[++old_index])
     {
-        if (!should_remove(shell->env_var[i], shell))
+        if (!is_env_var_unset(shell->env_var[old_index], shell))
         {
-            new_env[++k] = ft_strdup(shell->env_var[i]);
-            if (new_env[k] == NULL)
-                return (ft_free_matrix(new_env), 2);
+            new_env[++new_index] = ft_strdup(shell->env_var[old_index]);
+            if (!new_env[new_index])
+            {
+                ft_free_matrix(new_env);
+                return (2);
+            }
         }
     }
-    new_env[k] = NULL;
+    new_env[++new_index] = NULL;
     ft_free_matrix(shell->env_var);
     shell->env_var = new_env;
     return (0);
 }
-

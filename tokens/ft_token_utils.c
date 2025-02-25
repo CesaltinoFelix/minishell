@@ -1,41 +1,39 @@
 #include "../minishell.h"
 
-char *ft_strndup(const char *s, size_t len)
+int count_backslashes_before(char *start, char *pos)
 {
-    char *ptr;
-
-    ptr = (char *)malloc(sizeof(char) * (len + 1));
-    if (!ptr)
-        return (NULL);
-    ft_strlcpy(ptr, s, (len + 1));
-    return (ptr);
+    int count = 0;
+    
+    while (pos > start && *(pos - 1) == '\\')
+    {
+        count++;
+        pos--;
+    }
+    return (count);
 }
 
-int ft_check_quote(char *str)
+int get_quote_status(char *str)
 {
     int i;
     int status;
+    char quote;
 
     i = 0;
     status = 0;
     while (str[i])
     {
-        if (str[i] == '"' && (i == 0 || str[i - 1] != '\\'))
+        if ((str[i] == '"' || str[i] == '\'') && 
+        count_backslashes_before(str, &str[i]) % 2 == 0)
         {
-            i++;
-            status = 1;
-            while (str[i] && !(str[i] == '"' && str[i - 1] != '\\'))
+            quote = str[i++];
+            if (quote == '"')
+                status = 1;
+            else
+                status = 2;
+            while (str[i] && !(str[i] == quote && 
+                count_backslashes_before(str, &str[i]) % 2 == 0))
                 i++;
-            if (str[i] == '\0')
-                return (-1);
-        }
-        else if (str[i] == '\'' && (i == 0 || str[i - 1] != '\\'))
-        {
-            i++;
-            status = 2;
-            while (str[i] && !(str[i] == '\'' && str[i - 1] != '\\'))
-                i++;
-            if (str[i] == '\0')
+            if (!str[i])
                 return (-1);
         }
         i++;
@@ -43,109 +41,55 @@ int ft_check_quote(char *str)
     return (status);
 }
 
-int ft_strlen_unquote(const char *str)
+int unquoted_strlen(const char *str)
 {
-    int i = 0;
-    int count = 0;
+    int count;
+    char quote;
 
-    while (str[i])
+    count = 0; 
+    while (*str)
     {
-        if (str[i] == '"' || str[i] == '\'')
+        if (*str == '"' || *str == '\'')
         {
-            char quote = str[i];
-            i++;
-            while (str[i] && str[i] != quote)
+            quote = *str++;
+            while (*str && *str != quote)
             {
-                i++;
                 count++;
+                str++;
             }
-            if (str[i] == quote)
-                i++;
+            if (*str == quote)
+                str++;
         }
         else
         {
-            i++;
             count++;
+            str++;
         }
     }
     return (count);
 }
 
-int ft_strcpy_unquote(char *dest, const char *src, int size)
+int copy_without_quotes(char *dest, const char *src, int max_size)
 {
-    int i = 0;
-    int j = 0;
+    int i; 
+    int j;
+    char quote;
 
-    while (src[i] && j < size)
+    i = 0;
+    j = 0;
+    while (src[i] && j < max_size)
     {
         if (src[i] == '"' || src[i] == '\'')
         {
-            char quote = src[i];
-            i++;
-            while (src[i] && src[i] != quote && j < size)
-            {
+            quote = src[i++];
+            while (src[i] && src[i] != quote && j < max_size)
                 dest[j++] = src[i++];
-            }
             if (src[i] == quote)
                 i++;
         }
         else
-        {
             dest[j++] = src[i++];
-        }
     }
     dest[j] = '\0';
     return (i);
-}
-
-char **ft_copy_matrix(char **matrix, int size)
-{
-    char **copy_matrix;
-    int j, len;
-
-    j = 0;
-    copy_matrix = malloc(sizeof(char *) * (size + 1));
-    if (!copy_matrix)
-        return (NULL);
-
-    while (matrix[j] && j < size)
-    {
-        len = ft_strlen_unquote(matrix[j]);
-        copy_matrix[j] = malloc(sizeof(char) * (len + 1));
-        if (!copy_matrix[j])
-        {
-            while (--j >= 0)
-                ft_free_matrix(copy_matrix);
-            return (NULL);
-        }
-        ft_strcpy_unquote(copy_matrix[j], matrix[j], len);
-        j++;
-    }
-    copy_matrix[j] = NULL;
-    return (copy_matrix);
-}
-
-void ft_sort_string_matrix(char **matrix)
-{
-    int i;
-    int len;
-    char *tmp;
-
-    i = 0;
-    len = -1;
-    tmp = NULL;
-    while (matrix[++len])
-        ;
-    while (i < len - 1)
-    {
-        if (ft_strcmp(matrix[i], matrix[i + 1]) > 0)
-        {
-            tmp = matrix[i];
-            matrix[i] = matrix[i + 1];
-            matrix[i + 1] = tmp;
-            i = 0;
-        }
-        else
-            i++;
-    }
 }

@@ -1,22 +1,19 @@
 #include "../minishell.h"
 
-int ft_env(t_minishell *shell)
+int handle_env_command(t_minishell *shell)
 {
-        int i;
+    int i = 0;
 
-        i = -1;
-        if (shell->matrix[1] != NULL)
-        {
-                printf("error: has option or argument\n");
-                return (2);
-        }
-        else
-        {
-                while (shell->env_var[++i])
-                {
-                        if (ft_strchr(shell->env_var[i], '='))
-                                printf("%s\n", shell->env_var[i]);
-                }
-        }
-        return (0);
+    if (shell->matrix[1] != NULL)
+    {
+        printf("No such file or directory\n");
+        return (127);
+    }
+    while (shell->env_var[i])
+    {
+        if (ft_strchr(shell->env_var[i], '='))
+            printf("%s\n", shell->env_var[i]);
+        i++;
+    }
+    return (0);
 }

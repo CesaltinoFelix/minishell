@@ -46,6 +46,7 @@ void init_shell(t_minishell *shell, char *env[])
     shell->current_path = NULL;
     shell->last_exit_code = 0;
     shell->status = 0;
+    shell->print_status = 0;
 	shell->stdout_backup = dup(STDOUT_FILENO);
 	shell->stdin_backup = dup(STDIN_FILENO);
 
@@ -61,7 +62,7 @@ char **ft_get_matrix(t_minishell *shell)
     if (arg == NULL)
         return (NULL);
     while (arg[++i]);
-    shell->matrix = ft_copy_matrix(arg, i);
+    shell->matrix = duplicate_matrix_without_quotes(arg, i);
     ft_free_matrix(arg);
     if (shell->matrix == NULL)
         return (NULL);
@@ -106,71 +107,48 @@ int ft_execute_bin(t_minishell *shell)
     return (WEXITSTATUS(shell->status));
 }
 
-int ft_check_cmd(t_minishell *shell)
+void ft_check_cmd(t_minishell *shell)
 {
     if (ft_strcmp(shell->matrix[0], "echo") == 0)
-    shell->status = ft_echo(shell);
+        shell->status = handle_echo_command(shell);
     else if (ft_strcmp(shell->matrix[0], "cd") == 0)
-        shell->status = ft_cd(shell);
+        shell->status = handle_cd_command(shell);
     else if (ft_strcmp(shell->matrix[0], "pwd") == 0)
-        shell->status = ft_pwd(shell);
+        shell->status = handle_pwd_command(shell);
     else if (ft_strcmp(shell->matrix[0], "export") == 0)
-        shell->status = ft_export(shell);
+        shell->status = handle_export_command(shell);
     else if (ft_strcmp(shell->matrix[0], "unset") == 0)
-        shell->status = ft_unset(shell);
+        shell->status = handle_unset_command(shell);
     else if (ft_strcmp(shell->matrix[0], "env") == 0)
-        shell->status = ft_env(shell);
+        shell->status = handle_env_command(shell);
     else if (ft_strcmp(shell->matrix[0], "exit") == 0)
-        ft_exit(shell);
+        handle_exit_command(shell);
     else
         shell->status = ft_execute_bin(shell);
-    return (shell->status);
 }
 
-int ft_check_escape(char *str, char *pos)
-{
-    int count_escape;
-    
-    count_escape = 0;
-    while (pos > str && *(pos - 1) == '\\')
-    {
-        count_escape++;
-        pos--;
-    }
-    return (count_escape);
-}
-
-// void ft_replace_in(char **input)
-// {
-//     int total_chr;
-    
-//     total_chr = ft_check_escape(*input);
-//     if (total_chr % 2 == 0)
-//         *input += total_chr / 2;
-//     else
-//         *input += (total_chr / 2 ) + (total_chr % 2);
-// }
 void ft_read_inputs(t_minishell *shell)
 {
-    if (ft_check_quote(shell->input) == -1)
+    if (get_quote_status(shell->input) == -1)
     {
-        printf("error: input invalid: %s\n", shell->input);
+        printf("minishell: sintaxy error: %s\n", shell->input);
+        shell->status = 1;
         return;
     }
     else
     {
-        ft_expand_var(&shell->input);
-        // ft_replace_in(&shell->input);
+        ft_expand_var(shell);
         shell->matrix = ft_get_matrix(shell);
         if (ft_handle_redirections(shell) == -1)
+        {
+            shell->status = 1;
         	return;
-        if (ft_check_cmd(shell) == 0)
-            printf("status %d\n", shell->status);
-        else
-            printf("status %d\n", shell->status);
+        }
+        ft_check_cmd(shell);
         ft_restore_stdio(shell);
     }
 }
+
 char *trim_whitespace(char *str)
 {
     char *end;
@@ -212,20 +190,21 @@ void run_shell(t_minishell *shell)
             add_history(shell->input);
             ft_read_inputs(shell);
         }
-        else
-            continue;
     }
     check_to_free(shell);
 }
 
 int main(int argc, char const *argv[], char *env[])
 {
+    extern int g_status;
     (void)argc;
     (void)argv;
     t_minishell shell;
-
+    
     setup_signal_handlers();
     init_shell(&shell, env);
     run_shell(&shell);
-    return 0;
+    if(g_status == 130)
+        shell.status = 130;
+    return (shell.status);
 }

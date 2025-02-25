@@ -47,36 +47,41 @@ typedef struct s_minishell
         int stdin_backup;
         int	has_redirect_in;
         int	has_redirect_out;
+        int     print_status;
 } t_minishell;
 
-
 void    setup_signal_handlers(void);
-void    ft_expand_var(char **input);
-void    ft_exit(t_minishell *shell);
 void    ft_free_matrix(char **matrix);
 void    check_to_free(t_minishell *shell);
-void    update_or_add_env(t_minishell *shell);
+void    ft_expand_var(t_minishell *shell);
 void    ft_sort_string_matrix(char **matrix);
-void    extract_key_value(t_minishell *shell, const char *arg);
+void    ft_restore_stdio(t_minishell *shell);
+void    update_or_add_env_var(t_minishell *shell);
+void    print_sorted_env_vars(t_minishell *shell);
+void    print_invalid_identifier_error(const char *arg);
 
 char    **ft_cpy_env(char *env[]);
 char    *ft_strndup(const char *s, size_t len);
 char    **ft_split_quoted(const char *s, char c) ;
-char    **ft_copy_matrix(char **matrix, int size);
+char    **duplicate_matrix_without_quotes(char **matrix, int size);
+char    *ft_getenv(t_minishell *shell, const char *key);
 
+int     handle_cd_command(t_minishell *shell);
+int     handle_env_command(t_minishell *shell);
+int     handle_pwd_command(t_minishell *shell);
+int     handle_echo_command(t_minishell *shell);
+void    handle_exit_command(t_minishell *shell);
+int     handle_unset_command(t_minishell *shell);
+int     handle_export_command(t_minishell *shell);
 
-int     ft_check_escape(char *str, char *pos);
-int     ft_pwd(t_minishell *shell);
-int     ft_cd(t_minishell *shell);
-int     ft_check_quote(char *str);
-int     ft_env(t_minishell *shell);
-int     ft_echo(t_minishell *shell);
-int     ft_unset(t_minishell *shell);
-int     ft_export(t_minishell *shell);
-int     ft_strlen_unquote(const char *str);
-int     is_valid_identifier(const char *str);
-int ft_handle_redirections(t_minishell *shell);
-void ft_restore_stdio(t_minishell *shell);
-int     ft_strcpy_unquote(char *dest, const char *src, int size);
+int     is_quote(char c);
+int     get_quote_status(char *str);
+int     validate_unset_option(char **args);
+int     unquoted_strlen(const char *str);
+int     count_backslashes_before(char *str, char *pos);
+int     is_valid_env_var_name(const char *name);
+int     ft_handle_redirections(t_minishell *shell);
+int     copy_without_quotes(char *dest, const char *src, int size);
+int     is_env_var_match(const char *env_var, const char *key, size_t key_len);
 
 #endif

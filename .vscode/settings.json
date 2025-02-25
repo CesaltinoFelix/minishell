@@ -5,7 +5,8 @@
         "libft.h": "c",
         "readline.h": "c",
         "unistd.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "cmath": "c"
     },
     "functionHeaderExtension.headerFilePath": "/home/playboy7xb/minishell/minishell.h"
 }

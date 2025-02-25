@@ -1,63 +1,39 @@
 #include "../minishell.h"
 
-static int ft_echo_with_n(t_minishell *shell)
+void handle_echo_options(t_minishell *shell, int *print_newline, int *arg_index)
 {
-    int i;
-    int j;
+    int char_index;
 
-    i = 1;
-    while (shell->matrix[i])
+    while (shell->matrix[*arg_index] && shell->matrix[*arg_index][0] == '-' 
+           && shell->matrix[*arg_index][1] == 'n')
     {
-        if (shell->matrix[i][0] == '-' && shell->matrix[i][1] == 'n')
-        {
-            j = 2;
-            while (shell->matrix[i][j] == 'n')
-                j++;
-            if (shell->matrix[i][j] == '\0')
-                return (0);
-        }
+        char_index = 2;
+        while (shell->matrix[*arg_index][char_index] == 'n')
+            char_index++;
+        if (shell->matrix[*arg_index][char_index] == '\0')
+            *print_newline = 0;
         else
             break;
-        i++;
-    }
-    return (1);
-}
-
-void    ft_aux_echo(t_minishell *shell, int *i)
-{
-    int j;
-
-    while (shell->matrix[*i] && shell->matrix[*i][0] == '-' && shell->matrix[*i][1] == 'n')
-    {
-        j = 2;
-        while (shell->matrix[*i][j] == 'n')
-            j++;
-        if (shell->matrix[*i][j] != '\0')
-            break;
-        (*i)++;
+        (*arg_index)++;
     }
 }
 
-int ft_echo(t_minishell *shell)
+int handle_echo_command(t_minishell *shell)
 {
-    int i;
-    int new_line;
-    
-    i = 1;
-    new_line = 1;
-    if (ft_echo_with_n(shell) == 0)
+    int arg_index;
+    int print_newline;
+
+    arg_index = 1;
+    print_newline = 1;
+    handle_echo_options(shell, &print_newline, &arg_index);
+    while (shell->matrix[arg_index])
     {
-       new_line = 0;
-       ft_aux_echo(shell, &i);
-    }
-    while (shell->matrix[i])
-    {
-        printf("%s", shell->matrix[i]);
-        if (shell->matrix[i + 1])
+        printf("%s", shell->matrix[arg_index]);
+        if (shell->matrix[arg_index + 1])
             printf(" ");
-        i++;
+        arg_index++;
     }
-    if (new_line)
+    if (print_newline)
         printf("\n");
     return (0);
 }
