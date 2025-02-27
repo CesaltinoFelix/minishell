@@ -4,10 +4,10 @@ static int is_env_var_unset(char *var_name, t_minishell *shell)
 {
     int i = 1;
 
-    while (shell->matrix[i])
+    while (shell->parsed_input[i])
     {
-        shell->env.key = shell->matrix[i];
-        if (is_env_var_match(var_name, shell->env.key, ft_strlen(shell->env.key)))
+        shell->env_var.key = shell->parsed_input[i];
+        if (is_env_var_match(var_name, shell->env_var.key, ft_strlen(shell->env_var.key)))
             return (1);
         i++;
     }
@@ -16,12 +16,14 @@ static int is_env_var_unset(char *var_name, t_minishell *shell)
 
 static int count_remaining_env_vars(t_minishell *shell)
 {
-    int count = 0;
-    int i = 0;
-
-    while (shell->env_var[i])
+    int count;
+    int i;
+    
+    i = 0;
+    count = 0;
+    while (shell->env_variables[i])
     {
-        if (!is_env_var_unset(shell->env_var[i], shell))
+        if (!is_env_var_unset(shell->env_variables[i], shell))
             count++;
         i++;
     }
@@ -39,28 +41,28 @@ static int allocate_new_env(t_minishell *shell, char ***new_env)
 
 int handle_unset_command(t_minishell *shell)
 {
-    int old_index;
-    int new_index;
-    char **new_env;
+    int i;
+    int j;
+    char **new_envarion;
 
-    old_index = -1;
-    new_index = -1;
-    if (validate_unset_option(shell->matrix) || allocate_new_env(shell, &new_env))
+    i = -1;
+    j = -1;
+    if (validate_unset_option(shell->parsed_input) || allocate_new_env(shell, &new_envarion))
         return (2);
-    while (shell->env_var[++old_index])
+    while (shell->env_variables[++i])
     {
-        if (!is_env_var_unset(shell->env_var[old_index], shell))
+        if (!is_env_var_unset(shell->env_variables[i], shell))
         {
-            new_env[++new_index] = ft_strdup(shell->env_var[old_index]);
-            if (!new_env[new_index])
+            new_envarion[++j] = ft_strdup(shell->env_variables[i]);
+            if (!new_envarion[j])
             {
-                ft_free_matrix(new_env);
+                ft_free_matrix(new_envarion);
                 return (2);
             }
         }
     }
-    new_env[++new_index] = NULL;
-    ft_free_matrix(shell->env_var);
-    shell->env_var = new_env;
+    new_envarion[++j] = NULL;
+    ft_free_matrix(shell->env_variables);
+    shell->env_variables = new_envarion;
     return (0);
 }

@@ -1,10 +1,5 @@
 #include "../minishell.h"
 
-void print_invalid_identifier_error(const char *arg)
-{
-    printf("minishell: export: `%s`: not a valid identifier\n", arg);
-}
-
 void print_sorted_env_vars(t_minishell *shell)
 {
     int i;
@@ -12,7 +7,7 @@ void print_sorted_env_vars(t_minishell *shell)
     char **sorted_env;
 
     i = 0;
-    sorted_env = ft_cpy_env(shell->env_var);
+    sorted_env = ft_cpy_env_variables(shell->env_variables);
     ft_sort_string_matrix(sorted_env);
     while (sorted_env[i])
     {
@@ -27,4 +22,5 @@ void print_sorted_env_vars(t_minishell *shell)
             printf("declare -x %s\n", sorted_env[i]);
         i++;
     }
+    ft_free_matrix(sorted_env);
 }

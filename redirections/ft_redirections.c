@@ -5,12 +5,12 @@ static int	ft_handle_output_redir(t_minishell *shell, int i)
 	int		fd;
 	int		flags;
 
-	if (!shell->matrix[i + 1])
-		return (printf("Erro de sintaxe próximo ao token inesperado `newline'\n"), -1);
-	flags = (strcmp(shell->matrix[i], ">") == 0)
+	if (!shell->parsed_input[i + 1])
+		return (printf("minishell: syntax error near unexpected token `newline''\n"), -1);
+	flags = (strcmp(shell->parsed_input[i], ">") == 0)
 		? (O_WRONLY | O_CREAT | O_TRUNC)
 		: (O_WRONLY | O_CREAT | O_APPEND);
-	fd = open(shell->matrix[i + 1], flags, 0644);
+	fd = open(shell->parsed_input[i + 1], flags, 0644);
 	if (fd == -1)
 		return (perror("Erro ao abrir arquivo"), -1);
 	shell->stdout_backup = dup(STDOUT_FILENO);
@@ -24,9 +24,9 @@ static int	ft_handle_input_redir(t_minishell *shell, int i)
 {
 	int	fd;
 
-	if (!shell->matrix[i + 1])
-		return (printf("Erro de sintaxe próximo ao token inesperado `newline'\n"), -1);
-	fd = open(shell->matrix[i + 1], O_RDONLY);
+	if (!shell->parsed_input[i + 1])
+		return (printf("minishell: syntax error near unexpected token `newline'\n"), -1);
+	fd = open(shell->parsed_input[i + 1], O_RDONLY);
 	if (fd == -1)
 		return (perror("Erro ao abrir arquivo"), -1);
 	shell->stdin_backup = dup(STDIN_FILENO);
@@ -42,29 +42,29 @@ int	ft_handle_redirections(t_minishell *shell)
 	int	j;
 
 	i = 0;
-	while (shell->matrix[i])
+	while (shell->parsed_input[i])
 	{
-		if (!strcmp(shell->matrix[i], ">") || !strcmp(shell->matrix[i], ">>"))
+		if (!strcmp(shell->parsed_input[i], ">") || !strcmp(shell->parsed_input[i], ">>"))
 		{
 			if (ft_handle_output_redir(shell, i) == -1)
 				return (-1);
 		}
-		else if (!strcmp(shell->matrix[i], "<"))
+		else if (!strcmp(shell->parsed_input[i], "<"))
 		{
 			if (ft_handle_input_redir(shell, i) == -1)
 				return (-1);
 		}
-		if (!strcmp(shell->matrix[i], "<") || !strcmp(shell->matrix[i], ">") ||
-			!strcmp(shell->matrix[i], ">>"))
+		if (!strcmp(shell->parsed_input[i], "<") || !strcmp(shell->parsed_input[i], ">") ||
+			!strcmp(shell->parsed_input[i], ">>"))
 		{
 			j = i;
-			while (shell->matrix[j + 2])
+			while (shell->parsed_input[j + 2])
 			{
-				shell->matrix[j] = shell->matrix[j + 2];
+				shell->parsed_input[j] = shell->parsed_input[j + 2];
 				j++;
 			}
-			shell->matrix[j] = NULL;
-			shell->matrix[j + 1] = NULL;
+			shell->parsed_input[j] = NULL;
+			shell->parsed_input[j + 1] = NULL;
 			break ;
 		}
 		i++;

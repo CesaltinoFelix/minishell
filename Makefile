@@ -2,12 +2,16 @@ NAME = minishell
 CC = cc
 CFLAGS =  -Wall -Wextra -Werror -lreadline -lhistory
 SRCS =	main.c \
+	ft_execute.c \
 	./utils/ft_free.c \
 	./utils/ft_utils.c \
 	./utils/ft_signals.c \
+	./utils/ft_init_datas.c \
+	./utils/ft_file_error.c \
 	./utils/ft_expand_var.c \
 	./utils/ft_export_utils.c \
 	./tokens/ft_split2.c \
+	./tokens/ft_split_utils.c \
 	./tokens/ft_token_utils.c \
 	./builtins/ft_echo.c \
 	./builtins/ft_cd.c \

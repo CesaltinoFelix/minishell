@@ -1,126 +1,108 @@
 #include "../minishell.h"
 
-int ft_is_valid_variable(char c)
+static void remove_env_variable_from_input(t_minishell *shell)
 {
-    return (ft_isalnum(c) || c == '_');
-}
 
-void remove_escape_characters(char *str)
-{
-    char *src;
-    char *dst;
-    
-    src = str;
-    dst = str;
-    while (*src)
-    {
-        if (*src == '\\' && (*(src + 1) == '$' || *(src + 1) == '\\'))
-            src++;
-        *dst++ = *src++;
-    }
-    *dst = '\0';
-}
+    size_t updated_len;
+    size_t  var_name_len;
+    size_t chars_before_var;
+    char *updated_input;
 
-static void replace_variable(t_minishell *shell)
-{
-    size_t  i;
-    size_t  var_len;
-    size_t  val_len;
-    size_t  new_len;
-    size_t  input_len;
-    size_t  prefix_len;
-    char    *new_input;
-
-    i = -1;
-    var_len = shell->exp.end - shell->exp.start;
-    val_len = ft_strlen(shell->exp.var_value);
-    input_len = ft_strlen(shell->input);
-    new_len = input_len - var_len + val_len;
-    new_input = malloc(new_len + 1);
-    if (!new_input)
+    var_name_len = shell->var_exp.end - shell->var_exp.start;
+    updated_len = ft_strlen(shell->input) - var_name_len;
+    updated_input = malloc(sizeof(char) * (updated_len + 1));
+    if (!updated_input)
         return;
-    prefix_len = shell->exp.start - shell->input;
-    while (++i <= prefix_len)
-        new_input[i] = ((shell->input))[i];
-    ft_strcpy(new_input + prefix_len, shell->exp.var_value);
-    ft_strcpy(new_input + prefix_len + val_len, shell->exp.end);
+    chars_before_var = shell->var_exp.start - shell->input;
+    ft_memcpy(updated_input, shell->input, chars_before_var);
+    ft_strcpy(updated_input + chars_before_var, shell->var_exp.end);
     free(shell->input);
-    shell->input = new_input;
+    shell->input = updated_input;
 }
 
-void remove_variable(char **input, t_exp *exp)
+static void replace_env_variable_in_input(t_minishell *shell)
 {
-    char *new_input;
-    size_t new_len;
-    size_t prefix_len;
-    
-    new_len = ft_strlen(*input) - (exp->end - exp->start);
-    new_input = malloc(new_len + 1);
-    if (!new_input)
+    size_t  var_name_len = shell->var_exp.end - shell->var_exp.start;
+    size_t  replacement_len = ft_strlen(shell->var_exp.value);
+    size_t  input_len = ft_strlen(shell->input);
+    size_t  updated_len = input_len - var_name_len + replacement_len;
+    size_t  chars_before_var = shell->var_exp.start - shell->input;
+    char    *updated_input;
+
+    updated_input = malloc(updated_len + 1);
+    if (!updated_input)
         return;
-    prefix_len = exp->start - *input;
-    ft_strlcpy(new_input, *input, prefix_len);
-    ft_strcpy(new_input + prefix_len, exp->end);
-    free(*input);
-    *input = new_input;
+    ft_memcpy(updated_input, shell->input, chars_before_var);
+    ft_strcpy(updated_input + chars_before_var, shell->var_exp.value);
+    ft_strcpy(updated_input + chars_before_var + replacement_len, shell->var_exp.end);
+    free(shell->input);
+    shell->input = updated_input;
 }
 
-void ft_aux_expand(t_minishell *shell)
+void expand_env_variable(t_minishell *shell)
 {
-    size_t var_len;
+    size_t var_name_len;
 
-    if(shell->print_status)
+    if (shell->display_exit_status)
     {
-        shell->exp.var_value = ft_itoa(shell->status);
-        replace_variable(shell);
-        shell->print_status = 0;
+        shell->var_exp.value = ft_itoa(shell->exit_status);
+        replace_env_variable_in_input(shell);
+        shell->display_exit_status = 0;
+        free(shell->var_exp.value);
+        return;
+    }
+    var_name_len = shell->var_exp.end - (shell->var_exp.start + 1);
+    shell->var_exp.name = ft_strndup(shell->var_exp.start + 1, var_name_len);
+    if (!shell->var_exp.name)
+        return;
+    shell->var_exp.value = ft_getenv(shell, shell->var_exp.name);
+    free(shell->var_exp.name);
+    shell->var_exp.name = NULL;
+    if (!shell->var_exp.value)
+    {
+        remove_env_variable_from_input(shell);
+        return;
+    }
+    else
+        replace_env_variable_in_input(shell);
+}
+
+
+static void expand_single_env_variable(t_minishell *shell, char **current)
+{
+    if (count_backslashes_before(shell->input, shell->var_exp.start) % 2 == 1)
+    {
+        *current = shell->var_exp.start + 1;
+        return;
+    }
+    shell->var_exp.end = shell->var_exp.start + 1;
+    if (*(shell->var_exp.end) == '?')
+    {
+        shell->display_exit_status = 1;
+        shell->var_exp.end++;
+
     }
     else
     {
-        var_len = shell->exp.end - (shell->exp.start + 1);
-        shell->exp.var_name = ft_strndup(shell->exp.start + 1, var_len);
-        if (!shell->exp.var_name)
+        while (ft_isalnum(*(shell->var_exp.end)) || *(shell->var_exp.end) == '_')
+            shell->var_exp.end++;
+        if (shell->var_exp.end == shell->var_exp.start + 1)
+        {
+            *current = shell->var_exp.start + 1;
             return;
-        shell->exp.var_value = ft_getenv(shell, shell->exp.var_name);
-        free(shell->exp.var_name);
-        if (shell->exp.var_value)
-            replace_variable(shell);
-        else
-            remove_variable(&shell->input, &shell->exp);
+        }
     }
+    expand_env_variable(shell);
+    *current = shell->input;
 }
 
-void ft_expand_var(t_minishell *shell)
+void expand_all_env_variables(t_minishell *shell)
 {
-
     char *current;
     
     current = shell->input;
-    while ((shell->exp.start = ft_strchr(current, '$')) != NULL)
-    {
-        if (count_backslashes_before(shell->input, shell->exp.start) % 2 == 1)
-        {
-            current = shell->exp.start + 1;
-            continue;
-        }
-        shell->exp.end = shell->exp.start + 1;
-        if(*(shell->exp.end) == '?')
-        {
-            shell->print_status = 1;
-            shell->exp.end = shell->exp.end + 1;
-        }
-        else
-        {
-            while (ft_is_valid_variable(*(shell->exp.end)))
-            shell->exp.end++;
-            if (shell->exp.end == shell->exp.start + 1)
-            {
-                current = shell->exp.start + 1;
-                continue;
-            }
-        }
-        ft_aux_expand(shell);
-        current = shell->input;
-    }
-    remove_escape_characters(shell->input);
+    while ((shell->var_exp.start = ft_strchr(current, '$')) != NULL)
+        expand_single_env_variable(shell, &current);
+    remove_escaped_dollar_and_backslash(shell->input);
 }
+

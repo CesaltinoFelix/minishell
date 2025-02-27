@@ -1,19 +1,19 @@
 #include "../minishell.h"
 
+int ft_matrix_len (char **input)
+{
+    int     i;
+
+    i = 0;
+    while (input[i])
+        i++;
+    return (i);
+}
+
 int is_env_var_match(const char *env_var, const char *key, size_t key_len)
 {
     return (ft_strncmp(env_var, key, key_len) == 0 &&
             (env_var[key_len] == '=' || env_var[key_len] == '\0'));
-}
-
-int validate_unset_option(char **args)
-{
-    if (args[1] && args[1][0] == '-')
-    {
-        printf("%s: %s: invalid option\n", args[0], args[1]);
-        return (2);
-    }
-    return (0);
 }
 
 int is_valid_env_var_name(const char *name)
@@ -25,26 +25,40 @@ int is_valid_env_var_name(const char *name)
         return (0);
     while (name[i] && name[i] != '=')
     {
-        if (!ft_isalnum(name[i]) && name[i] != '_')
+        if (!ft_isalpha(name[i]) && !ft_isalnum(name[i]) && name[i] != '_')
             return (0);
         i++;
     }
     return (1);
 }
 
-char *ft_getenv(t_minishell *shell, const char *key)
+char *trim_whitespace(char *str)
 {
-   int i;
-   size_t key_len;
-
-   i = 0;
-   key_len = ft_strlen(key);
-   while (shell->env_var[i] != NULL)
-   {
-      if (ft_strncmp(shell->env_var[i], key, key_len) == 0 
-      && shell->env_var[i][key_len] == '=')
-         return (&shell->env_var[i][key_len + 1]);
-      i++;
-   }
-   return (NULL);
+    while (*str && ft_isspace(*str))
+        str++;
+    if (*str == '\0')
+        return (ft_strdup(""));
+    int end = ft_strlen(str) - 1;
+    while (end > 0 && ft_isspace(str[end]))
+        end--;
+    return (ft_strndup(str, end + 1));
 }
+
+
+void remove_escaped_dollar_and_backslash(char *str)
+{
+    char *read_ptr; 
+    char *write_ptr;
+    
+    read_ptr = str;
+    write_ptr = str;
+    while (*read_ptr)
+    {
+        if (*read_ptr == '\\' && (*(read_ptr + 1) == '$' || *(read_ptr + 1) == '\\'))
+            read_ptr++;
+        *write_ptr++ = *read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+

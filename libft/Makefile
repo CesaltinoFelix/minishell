@@ -29,6 +29,7 @@ FILES	=	ft_isalpha.c	\
 		ft_atoi.c 			\
 		ft_calloc.c 		\
 		ft_strdup.c 		\
+		ft_strndup.c		\
 		ft_substr.c 		\
 		ft_strjoin.c 		\
 		ft_strtrim.c 		\
@@ -41,8 +42,9 @@ FILES	=	ft_isalpha.c	\
 		ft_putendl_fd.c 	\
 		ft_putnbr_fd.c		\
 		ft_puthexa.c		\
-		ft_utils.c		\
-		ft_printf.c
+		ft_utils.c			\
+		ft_printf.c			\
+		ft_sort_string_matrix.c \
 
 BONUS =		ft_lstnew.c 	\
 			ft_lstadd_front.c 	\

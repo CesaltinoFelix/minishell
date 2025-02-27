@@ -20,25 +20,25 @@ void handle_exit_command(t_minishell *shell)
     long numeric_exit_code;
 
     printf("exit\n");
-    if (shell->matrix[1])
+    if (shell->parsed_input[1])
     {
-        if (!is_valid_numeric_argument(shell->matrix[1]))
+        if (!is_valid_numeric_argument(shell->parsed_input[1]))
         {
-            printf("minishell: exit: %s: numeric argument required\n", shell->matrix[1]);
-            shell->status = 2;
+            printf("minishell: exit: %s: numeric argument required\n", shell->parsed_input[1]);
+            shell->exit_status = 2;
         }
-        else if (shell->matrix[2])
+        else if (shell->parsed_input[2])
         {
             printf("minishell: exit: too many arguments\n");
-            shell->status = 1;
+            shell->exit_status = 1;
             return;
         }
         else
         {
-            numeric_exit_code = ft_atoi(shell->matrix[1]);
-            shell->status = (numeric_exit_code & 255);
+            numeric_exit_code = ft_atoi(shell->parsed_input[1]);
+            shell->exit_status = (numeric_exit_code & 255);
         }
     }
     check_to_free(shell);
-    exit(shell->status);
+    exit(shell->exit_status);
 }
