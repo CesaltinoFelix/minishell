@@ -67,7 +67,7 @@ char **tokenize_input(t_minishell *shell)
         return (NULL);
     token_count = ft_matrix_len(tokens);
     shell->parsed_input = duplicate_matrix_without_quotes(tokens, token_count);
-    ft_free_matrix(tokens);  // Libera os tokens antes de verificar erro
+    ft_free_matrix(tokens);
     if (shell->parsed_input == NULL)
         return (NULL);
     return (shell->parsed_input);
