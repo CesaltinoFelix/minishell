@@ -9,7 +9,7 @@ static int ft_handle_output_redir(t_minishell *shell, int i)
         return (printf("minishell: syntax error near unexpected token `newline'\n"), -1);
     if (shell->stdout_backup == -1)
         shell->stdout_backup = dup(STDOUT_FILENO);
-    if (!strcmp(shell->parsed_input[i], ">"))
+    if (!ft_strcmp(shell->parsed_input[i], ">"))
 		flags = (O_WRONLY | O_CREAT | O_TRUNC);
 	else
 		flags = (O_WRONLY | O_CREAT | O_APPEND);
@@ -47,6 +47,38 @@ static int ft_handle_input_redir(t_minishell *shell, int i)
     return (0);
 }
 
+static int ft_handle_heredoc(t_minishell *shell, int i)
+{
+    int     pipefd[2];
+    char    *line;
+    char    *delimiter;
+
+    if (!shell->parsed_input[i + 1])
+        return (printf("minishell: syntax error near unexpected token `newline'\n"), -1);
+    delimiter = shell->parsed_input[i + 1];
+    if (pipe(pipefd) == -1)
+        return (perror("minishell: pipe error"), -1);
+    write(1, "> ", 2);
+    while ((line = get_next_line(STDIN_FILENO)))
+    {   
+        line[ft_strlen(line) - 1] = '\0';
+        if (!ft_strcmp(line, delimiter))
+            break;
+        write(pipefd[1], line, ft_strlen(line));
+        write(pipefd[1], "\n", 1);
+        free(line);
+        write(1, "> ", 2);
+    }
+    free(line);
+    close(pipefd[1]);
+    if (shell->stdin_backup == -1)
+        shell->stdin_backup = dup(STDIN_FILENO);
+    dup2(pipefd[0], STDIN_FILENO);
+    close(pipefd[0]);
+    return (0);
+}
+
+
 static void	ft_remove_redirection(t_minishell *shell, int i)
 {
 	int	j;
@@ -67,21 +99,26 @@ int	ft_handle_redirections(t_minishell *shell)
 {
 	int	i;
 
-	i = 0;
+	i = 1;
 	while (shell->parsed_input[i])
 	{
-		if (!strcmp(shell->parsed_input[i], ">") || !strcmp(shell->parsed_input[i], ">>"))
+		if (!ft_strcmp(shell->parsed_input[i], ">") || !ft_strcmp(shell->parsed_input[i], ">>"))
 		{
 			if (ft_handle_output_redir(shell, i) == -1)
 				return (-1);
 		}
-		else if (!strcmp(shell->parsed_input[i], "<"))
+		else if (!ft_strcmp(shell->parsed_input[i], "<"))
 		{
 			if (ft_handle_input_redir(shell, i) == -1)
 				return (-1);
 		}
-		if (!strcmp(shell->parsed_input[i], "<") || !strcmp(shell->parsed_input[i], ">") 
-		|| !strcmp(shell->parsed_input[i], ">>"))
+        else if (!ft_strcmp(shell->parsed_input[i], "<<"))
+        {
+            if (ft_handle_heredoc(shell, i) == -1)
+                return (-1);
+        }
+		if (!ft_strcmp(shell->parsed_input[i], "<") || !ft_strcmp(shell->parsed_input[i], ">") 
+		|| !ft_strcmp(shell->parsed_input[i], ">>") || !ft_strcmp(shell->parsed_input[i], "<<"))
 		{
 			ft_remove_redirection(shell, i);
 			continue;

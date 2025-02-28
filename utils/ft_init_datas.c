@@ -32,7 +32,7 @@ void init_shell(t_minishell *shell, char *env[])
     shell->last_exit_code = 0;
     shell->exit_status = 0;
     shell->display_exit_status = 0;
-	shell->stdout_backup = dup(STDOUT_FILENO);
-	shell->stdin_backup = dup(STDIN_FILENO);
+	shell->stdout_backup = -1;
+	shell->stdin_backup = -1;
 
 }

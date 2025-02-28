@@ -44,7 +44,9 @@ FILES	=	ft_isalpha.c	\
 		ft_puthexa.c		\
 		ft_utils.c			\
 		ft_printf.c			\
+		get_next_line.c 	\
 		ft_sort_string_matrix.c \
+		get_next_line_utils.c 	
 
 BONUS =		ft_lstnew.c 	\
 			ft_lstadd_front.c 	\
