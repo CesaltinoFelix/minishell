@@ -13,6 +13,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+
 typedef struct s_variable_expansion
 {
         int len;
@@ -50,12 +51,8 @@ typedef struct s_minishell
         int display_exit_status;
 } t_minishell;
 
-typedef struct s_builtin_cmd
-{
-    char *name;
-    int (*function)(t_minishell *);
-} t_builtin_cmd;
 
+void sigint_handler(int sig);
 void    ft_write_error(char *str);
 void    run_shell(t_minishell *shell);
 void    ft_free_matrix(char **matrix);
@@ -90,6 +87,7 @@ int     handle_export_command(t_minishell *shell);
 int     is_quote(char c);
 int     is_redirection(char c);
 int     ft_matrix_len (char **input);
+int     ft_handle_heredoc(t_minishell *shell, int i);
 size_t  count_tokens(const char *input, char delimiter);
 void    skip_token(const char **input, char *quote, char delimiter);
 void    process_token(const char **input, char *quote, char delimiter, size_t *count);

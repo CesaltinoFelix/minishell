@@ -88,7 +88,7 @@ void run_shell(t_minishell *shell)
 {
     char *trimmed_input;
 
-    while (true)
+    while (1)
     {
         shell->input = readline("minishell> ");
         if (!shell->input)

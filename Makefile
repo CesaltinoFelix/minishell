@@ -21,6 +21,7 @@ SRCS =	main.c \
 	./builtins/ft_env.c \
 	./builtins/ft_exit.c \
 	./utils/ft_manipulation_str.c \
+	./redirections/ft_heredoc.c \
 	./redirections/ft_redirections.c
 
 OBJS = $(SRCS:.c=.o)

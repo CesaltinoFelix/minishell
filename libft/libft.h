@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eymarplayboy7 <eymarplayboy7@student.42    +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 13:08:46 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/02/26 15:27:23 by eymarplaybo      ###   ########.fr       */
+/*   Updated: 2025/03/12 13:29:12 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdarg.h>
-# include "get_next_line.h"
+// # include "get_next_line.h"
 
 typedef struct s_list
 {
