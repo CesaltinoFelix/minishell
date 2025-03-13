@@ -22,7 +22,8 @@ SRCS =	main.c \
 	./builtins/ft_exit.c \
 	./utils/ft_manipulation_str.c \
 	./redirections/ft_heredoc.c \
-	./redirections/ft_redirections.c
+	./redirections/ft_redirections.c \
+	./redirections/ft_heredoc_utils.c 
 
 OBJS = $(SRCS:.c=.o)
 L_DIR = ./libft

@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/03/12 19:40:04 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/03/13 14:09:03 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,89 +14,83 @@
 
 extern int g_heredoc_interrupted;
 
-int creact_file(char *file)
+int create_temp_file(char *file)
 {
     int fd;
     char *pid_str;
-    char *prefix;
-    
-    prefix = "/tmp/minishell_heredoc_";
+    char *prefix = "/tmp/minishell_heredoc_";
+
     pid_str = ft_itoa(getpid());
     if (!pid_str)
         return (-1);
-    ft_strlcpy(file, prefix, 128);
+    ft_memcpy(file, prefix, ft_strlen(prefix) + 1);
     ft_strlcat(file, pid_str, 128);
     free(pid_str);
-    fd = open(file, O_RDWR | O_CREAT | O_TRUNC, 0644);  
+    fd = open(file, O_RDWR | O_CREAT | O_TRUNC, 0644);
     if (fd == -1)
-        return (perror("error to open file"),-1);
-    return (fd);
-}
-int configure_signals(struct sigaction *sa_int, struct sigaction *sa_original)
-{
-    sa_int->sa_handler = sigint_handler;
-    sigemptyset(&sa_int->sa_mask);
-    sa_int->sa_flags = 0;
-    return (sigaction(SIGINT, sa_int, sa_original));
-}
-
-int handle_interruption(int fd, char *file)
-{
-    close(fd);
-    unlink(file);
-    return (-1);
-}
-
-int create_and_validate_heredoc(t_minishell *shell, int i, char *file)
-{
-    int fd;
-    
-    fd = creact_file(file);
-    if (fd == -1)
-    {
-        printf("error: could not create heredoc file\n");
-        return (-1);
-    }
-    if (!shell->parsed_input[i + 1])
-    {
-        printf("syntax error near unexpected token `newline'\n");
-        return (-1);   
-    }
+        perror("error opening file");
     return (fd);
 }
 
-int read_heredoc_input(int fd, t_minishell *shell, int i, char *file)
+int read_heredoc_input(int fd, t_minishell *shell, int i)
 {
-    char line[128];
-    size_t bytes_read;
-    
+    char *line;
+
     while (1)
     {
         if (g_heredoc_interrupted)
-            return (handle_interruption(fd, file));
-        write(1, "> ", 2);
-        bytes_read = read(0, line, sizeof(line) - 1);
-        if (bytes_read == 0)
+            return (-1);
+        line = readline("> ");
+        if (!line)
         {
-            printf("\n");
-            printf("warning: here-document at line 12 delimited by end-of-file (wanted `a')\n");
-            close(fd);
-            unlink(file);
-            return -1;
-        }
-        line[bytes_read - (line[bytes_read - 1] == '\n')] = '\0';
-        if (ft_strcmp(line, shell->parsed_input[i + 1]) == 0)
+            printf("warning: here-document at line 11 delimited by end-of-file (wanted `%s')\n"
+            , shell->parsed_input[i + 1]);
             break;
+        }
+        if (ft_strcmp(line, shell->parsed_input[i + 1]) == 0)
+        {
+            free(line);
+            break;
+        }
         write(fd, line, ft_strlen(line));
         write(fd, "\n", 1);
+        free(line);
     }
-    return (close(fd), 0);
+    return (0);
+}
+
+int process_heredoc(t_minishell *shell, int fd, int i, char *file)
+{
+    setup_heredoc_signals();
+    if (read_heredoc_input(fd, shell, i) == -1)
+    {
+        unlink(file); // Remove o arquivo temporário em caso de interrupção
+        exit(130);
+    }
+    exit(0);
+}
+
+int handle_heredoc_child(int fd, t_minishell *shell, int i, char *file)
+{
+    int pid = fork();
+    
+    if (pid == -1)
+    {
+        perror("fork");
+        close(fd);
+        unlink(file);
+        return (-1);
+    }
+    if (pid == 0)
+        process_heredoc(shell, fd, i, file);
+    close(fd);
+    return (pid);
 }
 
 int redirect_heredoc_input(t_minishell *shell, char *file)
 {
     int fd;
-    
+   
     if (shell->stdin_backup == -1)
         shell->stdin_backup = dup(STDIN_FILENO);
     if ((fd = open(file, O_RDONLY)) == -1)
@@ -118,17 +112,23 @@ int redirect_heredoc_input(t_minishell *shell, char *file)
 int ft_handle_heredoc(t_minishell *shell, int i)
 {
     int fd;
+    int pid;
     char file[128];
-    struct sigaction sa_int, sa_original;
-    
+
     g_heredoc_interrupted = 0;
-    if (configure_signals(&sa_int, &sa_original) == -1)
-        return (-1);
-    fd = create_and_validate_heredoc(shell, i, file);
+    ignore_sigint(); // Ignorar SIGINT no processo pai
+    fd = create_temp_file(file);
+    if (!shell->parsed_input[i + 1])
+        return(printf("minishell: syntax error near unexpected token `newline'\n"),-1);
     if (fd == -1)
         return (-1);
-    if (read_heredoc_input(fd, shell, i, file) == -1)
+    pid = handle_heredoc_child(fd, shell, i, file);
+    if (pid == -1)
         return (-1);
+    if (wait_for_heredoc(shell,pid, file) == -1)
+        return (-1);
+    restore_sigint(); // Restaurar o comportamento padrão de SIGINT
     return (redirect_heredoc_input(shell, file));
 }
+
 

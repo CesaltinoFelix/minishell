@@ -51,8 +51,8 @@ typedef struct s_minishell
         int display_exit_status;
 } t_minishell;
 
-
-void sigint_handler(int sig);
+void expand_all_env_variables(t_minishell *shell);
+void    sigint_handler(int sig);
 void    ft_write_error(char *str);
 void    run_shell(t_minishell *shell);
 void    ft_free_matrix(char **matrix);
@@ -83,6 +83,11 @@ void    handle_exit_command(t_minishell *shell);
 int     handle_unset_command(t_minishell *shell);
 int     handle_export_command(t_minishell *shell);
 
+void ignore_sigint();
+void restore_sigint();
+void setup_heredoc_signals();
+void heredoc_signal_handler(int sig);
+int wait_for_heredoc(t_minishell *shell, int pid, char *file);
 
 int     is_quote(char c);
 int     is_redirection(char c);

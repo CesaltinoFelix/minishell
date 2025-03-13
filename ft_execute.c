@@ -76,7 +76,8 @@ void process_user_input(t_minishell *shell)
     shell->parsed_input = tokenize_input(shell);
     if (!shell->parsed_input || ft_handle_redirections(shell) == -1)
     {
-        shell->exit_status = 2;
+        if (shell->exit_status != 130)
+            shell->exit_status = 2;
         return;
     }
     execute_command(shell);
