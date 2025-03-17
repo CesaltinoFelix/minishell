@@ -106,6 +106,7 @@ void run_shell(t_minishell *shell)
             process_user_input(shell);
         }
         check_to_free(shell);
+        // free(shell->input);
     }
     ft_free_matrix(shell->env_variables);
     check_to_free(shell);

@@ -50,20 +50,5 @@ void check_to_free(t_minishell *shell)
         ft_free_matrix(shell->parsed_input);
         shell->parsed_input = NULL;
     }
-    if (shell->system_paths)
-    {
-        ft_free_matrix(shell->system_paths);
-        shell->system_paths = NULL;
-    }
-    if (shell->previous_directory)
-    {
-        free(shell->previous_directory);
-        shell->previous_directory = NULL;
-    }
-    if (shell->current_directory)
-    {
-        free(shell->current_directory);
-        shell->current_directory = NULL;
-    }
 }
 
