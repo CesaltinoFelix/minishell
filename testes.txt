@@ -1,0 +1,14 @@
+COMANDOS QUE NAO ESTAO A SER BEM REPLICADOS
+####################
+sh-5.2$ echo felix01 > >a
+sh: syntax error near unexpected token `>'
+sh-5.2$ 
+
+##################
+sh-5.2$ cat <<<a
+a
+sh-5.2$ cat <<<<a
+sh: syntax error near unexpected token `<'
+sh-5.2$ cat <<< <a
+sh: syntax error near unexpected token `<'
+sh-5.2$ 

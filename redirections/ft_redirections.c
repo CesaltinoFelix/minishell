@@ -1,5 +1,21 @@
 #include "./../minishell.h"
 
+static int	handle_redirection_error(t_minishell *shell, int i)
+{
+    if (!ft_strcmp(shell->parsed_input[i + 1], ">") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<") ||
+        !ft_strcmp(shell->parsed_input[i + 1], ">>") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<<") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<>") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<<<") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<<<<") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<><") ||
+        !ft_strcmp(shell->parsed_input[i + 1], "<<>>"))
+    {
+        return (printf("minishell: syntax error near unexpected token `%s'\n", shell->parsed_input[i + 1]), -1);
+    }
+    return (0);
+}
 static int ft_handle_output_redir(t_minishell *shell, int i)
 {
     int fd;
@@ -7,6 +23,8 @@ static int ft_handle_output_redir(t_minishell *shell, int i)
     
     if (!shell->parsed_input[i + 1])
         return (printf("minishell: syntax error near unexpected token `newline'\n"), -1);
+    if(handle_redirection_error(shell, i) == -1)
+        return (-1);
     if (shell->stdout_backup == -1)
         shell->stdout_backup = dup(STDOUT_FILENO);
     if (!ft_strcmp(shell->parsed_input[i], ">"))
@@ -32,6 +50,8 @@ static int ft_handle_input_redir(t_minishell *shell, int i)
     
     if (!shell->parsed_input[i + 1])
         return (printf("minishell: syntax error near unexpected token `newline'\n"), -1);
+    if(handle_redirection_error(shell, i) == -1)
+        return (-1);
     if (shell->stdin_backup == -1)
         shell->stdin_backup = dup(STDIN_FILENO);
     fd = open(shell->parsed_input[i + 1], O_RDONLY);

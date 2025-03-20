@@ -45,44 +45,61 @@ int     execute_external_command(t_minishell *shell)
 }
 
 
-void    execute_command(t_minishell *shell)
+
+
+int execute_command(t_minishell *shell)
 {
     if (ft_strcmp(shell->parsed_input[0], "echo") == 0)
-    shell->exit_status = handle_echo_command(shell);
+        return (handle_echo_command(shell));
     else if (ft_strcmp(shell->parsed_input[0], "cd") == 0)
-        shell->exit_status = handle_cd_command(shell);
+        return (handle_cd_command(shell));
     else if (ft_strcmp(shell->parsed_input[0], "pwd") == 0)
-        shell->exit_status = handle_pwd_command(shell);
+        return (handle_pwd_command(shell));
     else if (ft_strcmp(shell->parsed_input[0], "export") == 0)
-        shell->exit_status = handle_export_command(shell);
+        return (handle_export_command(shell));
     else if (ft_strcmp(shell->parsed_input[0], "unset") == 0)
-        shell->exit_status = handle_unset_command(shell);
+        return (handle_unset_command(shell));
     else if (ft_strcmp(shell->parsed_input[0], "env") == 0)
-        shell->exit_status = handle_env_command(shell);
+        return (handle_env_command(shell));
     else if (ft_strcmp(shell->parsed_input[0], "exit") == 0)
+    {
         handle_exit_command(shell);
+        return (shell->exit_status);
+    }
     else
-        shell->exit_status = execute_external_command(shell);
+        return (execute_external_command(shell));
 }
 
-void process_user_input(t_minishell *shell)
-{
-    if (get_quote_status(shell->input) == -1)
-    {
+
+void process_user_input(t_minishell *shell) {
+    int cmd_count;
+    t_pipeline *cmds;
+
+    if (get_quote_status(shell->input) == -1) {
         shell->exit_status = 2;
         return;
     }
+    
     expand_all_env_variables(shell);
     shell->parsed_input = tokenize_input(shell);
-    if (!shell->parsed_input || ft_handle_redirections(shell) == -1)
-    {
-        if (shell->exit_status != 130)
-            shell->exit_status = 2;
+    
+    // Novo: split commands
+    cmds = split_commands(shell, &cmd_count);
+    
+    if (ft_handle_redirections(shell) == -1) {
+        shell->exit_status = 2;
         return;
     }
-    execute_command(shell);
+    
+    if (cmd_count > 1)
+        execute_pipeline(shell, cmds, cmd_count);
+    else
+        execute_command(shell);
+    
     ft_restore_stdio(shell);
+    free(cmds);
 }
+
 
 
 void run_shell(t_minishell *shell)

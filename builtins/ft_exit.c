@@ -39,6 +39,7 @@ void handle_exit_command(t_minishell *shell)
             shell->exit_status = (numeric_exit_code & 255);
         }
     }
+    
     check_to_free(shell);
     exit(shell->exit_status);
 }

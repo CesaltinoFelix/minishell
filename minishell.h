@@ -14,6 +14,7 @@
 #include <readline/history.h>
 
 
+
 typedef struct s_variable_expansion
 {
         int len;
@@ -51,13 +52,27 @@ typedef struct s_minishell
         int display_exit_status;
 } t_minishell;
 
+// IMPORTS FOR DEBUG
+void print_matrix(char **matrix);
+// Adicionar em minishell.h
+typedef struct s_pipeline {
+    char **cmd_args;
+    int is_last;
+    int fd_in;
+    int fd_out;
+} t_pipeline;
+
+// Protótipo da nova função
+t_pipeline *split_commands(t_minishell *shell, int *cmd_count);
+void execute_pipeline(t_minishell *shell, t_pipeline *cmds, int cmd_count);
+
 void expand_all_env_variables(t_minishell *shell);
 void    sigint_handler(int sig);
 void    ft_write_error(char *str);
 void    run_shell(t_minishell *shell);
 void    ft_free_matrix(char **matrix);
 void    initialize_signal_handlers(void);
-void    execute_command(t_minishell *shell);
+int    execute_command(t_minishell *shell);
 void    check_to_free(t_minishell *shell);
 void    process_user_input(t_minishell *shell);
 void    ft_restore_stdio(t_minishell *shell);
