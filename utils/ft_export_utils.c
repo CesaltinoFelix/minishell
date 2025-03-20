@@ -1,14 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export_utils.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/20 13:01:40 by cefelix           #+#    #+#             */
+/*   Updated: 2025/03/20 13:01:42 by cefelix          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void print_sorted_env_vars(t_minishell *shell)
 {
     int i;
     char *equal_sign;
-    char **sorted_env;
+    char **sorted_env = ft_cpy_env_variables(shell->env_variables);
 
-    i = 0;
-    sorted_env = ft_cpy_env_variables(shell->env_variables);
     ft_sort_string_matrix(sorted_env);
+    i = 0;
     while (sorted_env[i])
     {
         equal_sign = ft_strchr(sorted_env[i], '=');

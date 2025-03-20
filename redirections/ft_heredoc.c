@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_heredoc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/03/13 14:09:03 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/03/20 13:22:59 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int process_heredoc(t_minishell *shell, int fd, int i, char *file)
     setup_heredoc_signals();
     if (read_heredoc_input(fd, shell, i) == -1)
     {
-        unlink(file); // Remove o arquivo temporário em caso de interrupção
+        unlink(file);
         exit(130);
     }
     exit(0);
@@ -73,7 +73,7 @@ int process_heredoc(t_minishell *shell, int fd, int i, char *file)
 int handle_heredoc_child(int fd, t_minishell *shell, int i, char *file)
 {
     int pid = fork();
-    
+
     if (pid == -1)
     {
         perror("fork");
@@ -90,10 +90,11 @@ int handle_heredoc_child(int fd, t_minishell *shell, int i, char *file)
 int redirect_heredoc_input(t_minishell *shell, char *file)
 {
     int fd;
-   
+
     if (shell->stdin_backup == -1)
         shell->stdin_backup = dup(STDIN_FILENO);
-    if ((fd = open(file, O_RDONLY)) == -1)
+    fd = open(file, O_RDONLY);
+    if (fd == -1)
     {
         perror("open");
         printf("error: could not open heredoc file\n");
@@ -116,19 +117,17 @@ int ft_handle_heredoc(t_minishell *shell, int i)
     char file[128];
 
     g_heredoc_interrupted = 0;
-    ignore_sigint(); // Ignorar SIGINT no processo pai
+    ignore_sigint();
     fd = create_temp_file(file);
     if (!shell->parsed_input[i + 1])
-        return(printf("minishell: syntax error near unexpected token `newline'\n"),-1);
+        return (printf("minishell: syntax error near unexpected token `newline'\n"), -1);
     if (fd == -1)
         return (-1);
     pid = handle_heredoc_child(fd, shell, i, file);
     if (pid == -1)
         return (-1);
-    if (wait_for_heredoc(shell,pid, file) == -1)
+    if (wait_for_heredoc(shell, pid, file) == -1)
         return (-1);
-    restore_sigint(); // Restaurar o comportamento padrão de SIGINT
+    restore_sigint();
     return (redirect_heredoc_input(shell, file));
 }
-
-

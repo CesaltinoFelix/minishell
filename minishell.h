@@ -1,92 +1,103 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
+/*   Updated: 2025/03/20 13:05:23 by cefelix          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL
-#define MINISHELL
+# define MINISHELL
 
-#include <stdio.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include "./libft/libft.h"
-#include <readline/readline.h>
-#include <readline/history.h>
-
-
+# include <stdio.h>
+# include <fcntl.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <stdbool.h>
+# include <signal.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include "./libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
 
 typedef struct s_variable_expansion
 {
-        int len;
-        char *end;
-        char *start;
-        char *name;
-        char *value;
-} t_var_exp;
+    int     len;
+    char    *end;
+    char    *start;
+    char    *name;
+    char    *value;
+}   t_var_exp;
 
 typedef struct s_environment_variable
 {
-        char *key;
-        char *value;
-        char *full_var;
-        size_t key_len;
-        char *equal_sign;
-} t_env_var;
+    char    *key;
+    char    *value;
+    char    *full_var;
+    size_t  key_len;
+    char    *equal_sign;
+}   t_env_var;
 
 typedef struct s_minishell
 {
-        t_env_var env_var;
-        t_var_exp var_exp;
-        char *input;
-        char **parsed_input;
-        char **system_paths;
-        char **env_variables;
-        char *previous_directory;
-        char *current_directory;
-        int exit_status;
-        int last_exit_code;
-        int stdout_backup;
-        int stdin_backup;
-        int has_input_redirect;
-        int has_output_redirect;
-        int display_exit_status;
-} t_minishell;
+    t_env_var       env_var;
+    t_var_exp       var_exp;
+    char            *input;
+    char            **parsed_input;
+    char            **system_paths;
+    char            **env_variables;
+    char            *previous_directory;
+    char            *current_directory;
+    int             exit_status;
+    int             last_exit_code;
+    int             stdout_backup;
+    int             stdin_backup;
+    int             has_input_redirect;
+    int             has_output_redirect;
+    int             display_exit_status;
+}   t_minishell;
 
-// IMPORTS FOR DEBUG
-void print_matrix(char **matrix);
-// Adicionar em minishell.h
-typedef struct s_pipeline {
-    char **cmd_args;
-    int is_last;
-    int fd_in;
-    int fd_out;
-} t_pipeline;
+typedef struct s_pipeline
+{
+    char    **cmd_args;
+    int     is_last;
+    int     fd_in;
+    int     fd_out;
+}   t_pipeline;
 
-// Protótipo da nova função
-t_pipeline *split_commands(t_minishell *shell, int *cmd_count);
-void execute_pipeline(t_minishell *shell, t_pipeline *cmds, int cmd_count);
+/* Function Prototypes */
 
-void expand_all_env_variables(t_minishell *shell);
+void    print_matrix(char **matrix);
+
+t_pipeline    *split_commands(t_minishell *shell, int *cmd_count);
+void    execute_pipeline(t_minishell *shell, t_pipeline *cmds, int cmd_count);
+
+void    expand_all_env_variables(t_minishell *shell);
 void    sigint_handler(int sig);
 void    ft_write_error(char *str);
 void    run_shell(t_minishell *shell);
 void    ft_free_matrix(char **matrix);
 void    initialize_signal_handlers(void);
-int    execute_command(t_minishell *shell);
+int     execute_command(t_minishell *shell);
 void    check_to_free(t_minishell *shell);
 void    process_user_input(t_minishell *shell);
 void    ft_restore_stdio(t_minishell *shell);
 void    update_or_add_env_var(t_minishell *shell);
 void    print_sorted_env_vars(t_minishell *shell);
 void    init_shell(t_minishell *shell, char *env[]);
-void    expand_all_env_variables(t_minishell *shell);
+
 void    remove_escaped_dollar_and_backslash(char *str);
 void    print_invalid_identifier_error(const char *arg);
 
 char    *trim_whitespace(char *str);
 char    **tokenize_input(t_minishell *shell);
 char    **ft_cpy_env_variables(char *env[]);
-char    **ft_split_quoted(const char *s, char c) ;
+char    **ft_split_quoted(const char *s, char c);
 char    **duplicate_matrix_without_quotes(char **matrix, int size);
 char    *ft_getenv(t_minishell *shell, const char *key);
 
@@ -98,15 +109,15 @@ void    handle_exit_command(t_minishell *shell);
 int     handle_unset_command(t_minishell *shell);
 int     handle_export_command(t_minishell *shell);
 
-void ignore_sigint();
-void restore_sigint();
-void setup_heredoc_signals();
-void heredoc_signal_handler(int sig);
-int wait_for_heredoc(t_minishell *shell, int pid, char *file);
+void    ignore_sigint(void);
+void    restore_sigint(void);
+void    setup_heredoc_signals(void);
+void    heredoc_signal_handler(int sig);
+int     wait_for_heredoc(t_minishell *shell, int pid, char *file);
 
 int     is_quote(char c);
 int     is_redirection(char c);
-int     ft_matrix_len (char **input);
+int     ft_matrix_len(char **input);
 int     ft_handle_heredoc(t_minishell *shell, int i);
 size_t  count_tokens(const char *input, char delimiter);
 void    skip_token(const char **input, char *quote, char delimiter);
