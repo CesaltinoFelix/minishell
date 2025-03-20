@@ -86,21 +86,20 @@ void process_user_input(t_minishell *shell) {
     // Novo: split commands
     cmds = split_commands(shell, &cmd_count);
     
-    if (ft_handle_redirections(shell) == -1) {
-        shell->exit_status = 2;
-        return;
-    }
-    
     if (cmd_count > 1)
         execute_pipeline(shell, cmds, cmd_count);
     else
+    {
+        if (ft_handle_redirections(shell) == -1) {
+            shell->exit_status = 2;
+            return;
+        }
         execute_command(shell);
+    }
     
     ft_restore_stdio(shell);
     free(cmds);
 }
-
-
 
 void run_shell(t_minishell *shell)
 {

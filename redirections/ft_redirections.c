@@ -98,30 +98,38 @@ int ft_handle_redireciton_aux(t_minishell *shell, int i)
 	}
     return (0);
 }
-int	ft_handle_redirections(t_minishell *shell)
+int ft_handle_redirections(t_minishell *shell)
 {
-	int	i;
+    int i = 0;
 
-	i = 1;
-	while (shell->parsed_input[i])
-	{
-		if (ft_handle_redireciton_aux(shell, i) != 0)
-            return (-1);
-        if (!ft_strcmp(shell->parsed_input[i], "<<"))
+    while (shell->parsed_input[i])
+    {
+        if (!ft_strcmp(shell->parsed_input[i], ">") || !ft_strcmp(shell->parsed_input[i], ">>"))
+        {
+            if (ft_handle_output_redir(shell, i) == -1)
+                return (-1);
+        }
+        else if (!ft_strcmp(shell->parsed_input[i], "<"))
+        {
+            if (ft_handle_input_redir(shell, i) == -1)
+                return (-1);
+        }
+        else if (!ft_strcmp(shell->parsed_input[i], "<<"))
         {
             if (ft_handle_heredoc(shell, i) == -1)
                 return (-1);
         }
-		if (!ft_strcmp(shell->parsed_input[i], "<") || !ft_strcmp(shell->parsed_input[i], ">") 
-		|| !ft_strcmp(shell->parsed_input[i], ">>") || !ft_strcmp(shell->parsed_input[i], "<<"))
-		{
-			ft_remove_redirection(shell, i);
-			continue;
-		}
-		i++;
-	}
-	return (0);
+        else
+        {
+            i++;
+            continue;
+        }
+
+        ft_remove_redirection(shell, i); // Remove o token de redirecionamento e o arquivo associado
+    }
+    return (0);
 }
+
 
 
 void ft_restore_stdio(t_minishell *shell)
