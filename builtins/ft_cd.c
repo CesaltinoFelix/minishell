@@ -6,13 +6,14 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:43 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/20 13:06:57 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/24 11:54:10 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	update_shell_env(t_minishell *shell, const char *key, const char *value)
+static void	update_shell_env(t_minishell *shell, \
+const char *key, const char *value)
 {
 	shell->env_var.key = ft_strdup(key);
 	shell->env_var.value = ft_strdup(value);

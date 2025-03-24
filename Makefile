@@ -16,15 +16,18 @@ SRCS =	main.c \
 	./builtins/ft_echo.c \
 	./builtins/ft_cd.c \
 	./builtins/ft_pwd.c \
-	./builtins/ft_export.c \
+	./builtins/ft_export1.c \
+	./builtins/ft_export2.c \
 	./builtins/ft_unset.c \
 	./builtins/ft_env.c \
 	./builtins/ft_exit.c \
 	./utils/ft_manipulation_str.c \
-	./redirections/ft_heredoc.c \
+	./redirections/ft_heredoc1.c \
+	./redirections/ft_heredoc2.c \
 	./redirections/ft_redirections.c \
 	./redirections/ft_heredoc_utils.c \
-	./redirections/ft_pipe.c \
+	./redirections/ft_pipe1.c \
+	./redirections/ft_pipe2.c \
 	./debug.c 
 
 OBJS = $(SRCS:.c=.o)

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pipe.c                                          :+:      :+:    :+:   */
+/*   ft_pipe1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/20 13:21:46 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/24 14:37:59 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 int	is_builtin(char *cmd)
 {
-	return (ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "cd") == 0 ||
-		ft_strcmp(cmd, "pwd") == 0 || ft_strcmp(cmd, "export") == 0 ||
-		ft_strcmp(cmd, "unset") == 0 || ft_strcmp(cmd, "env") == 0 ||
-		ft_strcmp(cmd, "exit") == 0);
+	return (ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "cd") == 0
+		|| ft_strcmp(cmd, "pwd") == 0 || ft_strcmp(cmd, "export") == 0
+		|| ft_strcmp(cmd, "unset") == 0 || ft_strcmp(cmd, "env") == 0
+		|| ft_strcmp(cmd, "exit") == 0);
 }
 
 t_pipeline	*split_commands(t_minishell *shell, int *cmd_count)
@@ -26,7 +26,7 @@ t_pipeline	*split_commands(t_minishell *shell, int *cmd_count)
 	int			j;
 	t_pipeline	*cmds;
 
-i = 0;
+	i = 0;
 	j = 0;
 	cmds = malloc(sizeof(t_pipeline) * 10);
 	while (shell->parsed_input[i])
@@ -34,9 +34,11 @@ i = 0;
 		cmds[j].cmd_args = &shell->parsed_input[i];
 		cmds[j].fd_in = STDIN_FILENO;
 		cmds[j].fd_out = STDOUT_FILENO;
-		while (shell->parsed_input[i] && ft_strcmp(shell->parsed_input[i], "|") != 0)
+		while (shell->parsed_input[i] && \
+ft_strcmp(shell->parsed_input[i], "|") != 0)
 			i++;
-		if (shell->parsed_input[i] && ft_strcmp(shell->parsed_input[i], "|") == 0)
+		if (shell->parsed_input[i] && \
+ft_strcmp(shell->parsed_input[i], "|") == 0)
 		{
 			shell->parsed_input[i] = NULL;
 			i++;
@@ -48,80 +50,17 @@ i = 0;
 	return (cmds);
 }
 
-static char	*get_output_file(char **cmd_args)
-{
-	int	i;
-
-i = 0;
-	while (cmd_args[i])
-	{
-		if (ft_strcmp(cmd_args[i], ">") == 0 || ft_strcmp(cmd_args[i], ">>") == 0)
-		{
-			if (cmd_args[i + 1])
-				return (cmd_args[i + 1]);
-			else
-				return (NULL);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-static char	*get_input_file(char **cmd_args)
-{
-	int	i;
-
-i = 0;
-	while (cmd_args[i])
-	{
-		if (ft_strcmp(cmd_args[i], "<") == 0)
-		{
-			if (cmd_args[i + 1])
-				return (cmd_args[i + 1]);
-			else
-				return (NULL);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-static void	remove_redirection_tokens(char **cmd_args, char *token)
-{
-	int	i;
-
-i = 0;
-	while (cmd_args[i])
-	{
-		if (ft_strcmp(cmd_args[i], token) == 0)
-		{
-			free(cmd_args[i]);
-			free(cmd_args[i + 1]);
-			while (cmd_args[i + 2])
-			{
-				cmd_args[i] = cmd_args[i + 2];
-				i++;
-			}
-			cmd_args[i] = NULL;
-			cmd_args[i + 1] = NULL;
-			break ;
-		}
-		i++;
-	}
-}
-
 void	apply_redirections(char **cmd_args)
 {
 	char	*output_file;
 	char	*input_file;
+	int		fd;
 
-output_file = get_output_file(cmd_args);
+	output_file = get_output_file(cmd_args);
 	input_file = get_input_file(cmd_args);
 	if (output_file)
 	{
-		int	fd;
-
-fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
 			exit(1);
 		dup2(fd, STDOUT_FILENO);
@@ -131,9 +70,7 @@ fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
 	if (input_file)
 	{
-		int	fd;
-
-fd = open(input_file, O_RDONLY);
+		fd = open(input_file, O_RDONLY);
 		if (fd == -1)
 			exit(1);
 		dup2(fd, STDIN_FILENO);
@@ -147,9 +84,11 @@ void	execute_pipeline(t_minishell *shell, t_pipeline *cmds, int cmd_count)
 	int		pipes[2];
 	int		prev_pipe_in;
 	pid_t	pid;
+	int		i;
 
-prev_pipe_in = 0;
-	for (int i = 0; i < cmd_count; i++)
+	prev_pipe_in = 0;
+	i = 0;
+	while (i < cmd_count)
 	{
 		if (i < cmd_count - 1)
 			pipe(pipes);
@@ -182,6 +121,7 @@ prev_pipe_in = 0;
 				close(pipes[1]);
 			}
 		}
+		i++;
 	}
 	while (waitpid(0, &shell->exit_status, 0) > 0)
 		;

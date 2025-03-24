@@ -1,0 +1,13 @@
+builtins
+debug.c
+ft_execute.c
+libft
+main.c
+Makefile
+minishell
+minishell.h
+README.md
+redirections
+teste
+tokens
+utils

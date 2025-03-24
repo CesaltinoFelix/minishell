@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/20 13:05:23 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/24 14:37:38 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,4 +133,12 @@ int     ft_handle_redirections(t_minishell *shell);
 int     copy_without_quotes(char *dest, const char *src, int size);
 int     is_env_var_match(const char *env_var, const char *key, size_t key_len);
 
+void	extract_env_key_value(t_minishell *shell, const char *arg);
+char	*create_env_var_string(t_minishell *shell);
+void	add_env_var_to_array(t_minishell *shell, char *new_var);
+int	find_and_update_env_var(t_minishell *shell, char *new_var);
+int	create_temp_file(char *file);
+char	*get_output_file(char **cmd_args);
+char	*get_input_file(char **cmd_args);
+void	remove_redirection_tokens(char **cmd_args, char *token);
 #endif

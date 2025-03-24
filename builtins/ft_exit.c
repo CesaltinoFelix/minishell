@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:54 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/20 13:09:43 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/24 11:56:04 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,15 @@ void	handle_exit_command(t_minishell *shell)
 	{
 		if (!is_valid_numeric_argument(shell->parsed_input[1]))
 		{
-			printf("minishell: exit: %s: numeric argument required\n", shell->parsed_input[1]);
+			printf("minishell: exit: %s: numeric argument required\n", \
+			shell->parsed_input[1]);
 			shell->exit_status = 2;
 		}
 		else if (shell->parsed_input[2])
 		{
 			printf("minishell: exit: too many arguments\n");
 			shell->exit_status = 1;
-			return;
+			return ;
 		}
 		else
 		{

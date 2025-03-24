@@ -6,17 +6,19 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:47 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/20 13:08:02 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/24 11:55:06 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	handle_echo_options(t_minishell *shell, int *print_newline, int *arg_index)
+void	handle_echo_options(t_minishell *shell, \
+int *print_newline, int *arg_index)
 {
 	int	char_index;
 
-	while (shell->parsed_input[*arg_index] && shell->parsed_input[*arg_index][0] == '-'
+	while (shell->parsed_input[*arg_index] && \
+	shell->parsed_input[*arg_index][0] == '-'
 		&& shell->parsed_input[*arg_index][1] == 'n')
 	{
 		char_index = 2;

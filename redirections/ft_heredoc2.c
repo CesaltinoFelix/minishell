@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   ft_heredoc2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/20 13:03:02 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/24 12:50:32 by cefelix          ###   ########.fr       */
+/*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
+/*   Updated: 2025/03/24 12:56:36 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "./../minishell.h"
 
-int	handle_pwd_command(t_minishell *shell)
+int	create_temp_file(char *file)
 {
-	char	current_directory[255];
+	int		fd;
+	char	*pid_str;
+	char	*prefix;
 
-	if (shell->parsed_input[1])
-	{
-		if (!ft_isalpha(shell->parsed_input[1][0]))
-		{
-			printf("%s: %s: invalid option\n",
-				shell->parsed_input[0], shell->parsed_input[1]);
-			return (2);
-		}
-	}
-	if (getcwd(current_directory, sizeof(current_directory)))
-		printf("%s\n", current_directory);
-	return (0);
+	prefix = "/tmp/minishell_heredoc_";
+	pid_str = ft_itoa(getpid());
+	if (!pid_str)
+		return (-1);
+	ft_memcpy(file, prefix, ft_strlen(prefix) + 1);
+	ft_strlcat(file, pid_str, 128);
+	free(pid_str);
+	fd = open(file, O_RDWR | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+		perror("error opening file");
+	return (fd);
 }
