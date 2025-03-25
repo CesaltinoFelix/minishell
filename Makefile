@@ -8,7 +8,8 @@ SRCS =	main.c \
 	./utils/ft_signals.c \
 	./utils/ft_init_datas.c \
 	./utils/ft_file_error.c \
-	./utils/ft_expand_var.c \
+	./utils/ft_expand_var1.c \
+	./utils/ft_expand_var2.c \
 	./utils/ft_export_utils.c \
 	./tokens/ft_split2.c \
 	./tokens/ft_split_utils.c \
@@ -28,6 +29,7 @@ SRCS =	main.c \
 	./redirections/ft_heredoc_utils.c \
 	./redirections/ft_pipe1.c \
 	./redirections/ft_pipe2.c \
+	./redirections/ft_redirections_utils.c \
 	./debug.c 
 
 OBJS = $(SRCS:.c=.o)
