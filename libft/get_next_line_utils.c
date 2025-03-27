@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 17:53:14 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/02/01 18:06:15 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/03/27 12:36:24 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,10 @@ char	*resize_buf(char *line, size_t *size)
 	size_t	new_size;
 	char	*new_line;
 
-        if (*size == 0)
-	  new_size = BUFFER_SIZE;
+	if (*size == 0)
+		new_size = BUFFER_SIZE;
 	else
-	   new_size = *size * 2;
+		new_size = *size * 2;
 	new_line = (char *)malloc(new_size);
 	if (!new_line)
 		return (NULL);
@@ -50,4 +50,3 @@ char	*resize_buf(char *line, size_t *size)
 	*size = new_size;
 	return (new_line);
 }
-

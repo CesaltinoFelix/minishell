@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isspace.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: playboy7xb <playboy7xb@student.42.fr>      +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 12:42:47 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/01/30 13:02:55 by playboy7xb       ###   ########.fr       */
+/*   Updated: 2025/03/27 12:43:39 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int ft_isspace(int c)
+int	ft_isspace(int c)
 {
-        return(c == 32 || (c >= 9 && c <= 13));
+	return (c == 32 || (c >= 9 && c <= 13));
 }
