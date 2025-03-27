@@ -25,10 +25,12 @@ SRCS =	main.c \
 	./utils/ft_manipulation_str.c \
 	./redirections/ft_heredoc1.c \
 	./redirections/ft_heredoc2.c \
-	./redirections/ft_redirections.c \
+	./redirections/ft_redirections1.c \
+	./redirections/ft_redirections2.c \
 	./redirections/ft_heredoc_utils.c \
 	./redirections/ft_pipe1.c \
 	./redirections/ft_pipe2.c \
+	./redirections/ft_pipe3.c \
 	./redirections/ft_redirections_utils.c \
 	./debug.c 
 

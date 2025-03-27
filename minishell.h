@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/25 16:45:19 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/27 12:27:00 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,4 +143,12 @@ char		*allocate_updated_input(size_t updated_len);
 void		expand_env_variable(t_minishell *shell);
 void	remove_redirection(t_minishell *shell, int i);
 int	is_output_redirection(char *str);
+int	handle_redirection_error(t_minishell *shell, int i);
+int	set_output_flags(char *redir_type);
+int	is_builtin(char *cmd);
+void	init_cmd(t_pipeline *cmd, char **input, int i);
+void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
+				int prev_pipe_in, int pipes[2]);
+				void	handle_parent_process(int i, int cmd_count,
+				int pipes[2], int *prev_pipe_in);
 #endif
