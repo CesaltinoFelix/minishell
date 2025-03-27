@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:24:18 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/25 16:31:21 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/03/27 13:29:11 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	is_quote(char c)
 
 int	is_redirection(char c)
 {
-	return (c == '>' || c == '<');
+	return (c == '>' || c == '<' || c == '|');
 }
 
 void	process_token(const char **input, char *quote,
