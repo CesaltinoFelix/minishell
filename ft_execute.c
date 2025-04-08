@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/08 09:22:40 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 12:02:10 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,21 @@ void	ft_run_execve(t_minishell *shell, int *i, char **path)
 
 	while (shell->system_paths[++(*i)])
 	{
-		tmp = ft_strjoin(shell->system_paths[*i], "/");
-		if (!*tmp)
-			continue ;
-		*path = ft_strjoin(tmp, shell->parsed_input[0]);
-		free(tmp);
-		if (!*path)
-			continue ;
-		execve(*path, shell->parsed_input, shell->env_variables);
-		free(*path);
+		if (shell->parsed_input[0][0] == '/')
+			execve(shell->parsed_input[0], shell->parsed_input,
+			shell->env_variables);
+		else
+		{
+			tmp = ft_strjoin(shell->system_paths[*i], "/");
+			if (!*tmp)
+				continue ;
+			*path = ft_strjoin(tmp, shell->parsed_input[0]);
+			free(tmp);
+			if (!*path)
+				continue ;
+			execve(*path, shell->parsed_input, shell->env_variables);
+			free(*path);
+		}
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:43 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/24 11:54:10 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 12:19:45 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,6 @@ const char *key, const char *value)
 	free(shell->env_var.value);
 }
 
-static int	change_directory_to_home(t_minishell *shell)
-{
-	char	*home_dir;
-
-	home_dir = ft_getenv(shell, "HOME");
-	if (home_dir == NULL)
-	{
-		printf("minishell: cd: HOME not set\n");
-		return (1);
-	}
-	if (chdir(home_dir) != 0)
-		return (1);
-	return (0);
-}
-
 int	handle_cd_command(t_minishell *shell)
 {
 	char			current_dir[128];
@@ -46,15 +31,9 @@ int	handle_cd_command(t_minishell *shell)
 	update_shell_env(shell, "OLDPWD", shell->previous_directory);
 	target_dir = shell->parsed_input[1];
 	if (target_dir == NULL)
-	{
-		if (change_directory_to_home(shell) != 0)
-			return (1);
-	}
+		return (printf("minishell: cd: too few arguments\n"), 1);
 	else if (shell->parsed_input[2] != NULL)
-	{
-		printf("minishell: cd: too many arguments\n");
-		return (1);
-	}
+		return (printf("minishell: cd: too many arguments\n"), 1);
 	else if (chdir(target_dir) != 0)
 	{
 		printf("minishell: cd: %s: No such file or directory\n", target_dir);

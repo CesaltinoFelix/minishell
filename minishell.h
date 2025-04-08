@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/27 13:10:02 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 13:56:16 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <limits.h>
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -132,6 +133,7 @@ int			handle_echo_command(t_minishell *shell);
 int			handle_unset_command(t_minishell *shell);
 int			handle_export_command(t_minishell *shell);
 int			wait_for_heredoc(t_minishell *shell, int pid, char *file);
+int			ft_aux_expand_single_env(t_minishell *shell, char **current);
 int			is_quote(char c);
 int			is_redirection(char c);
 int			ft_matrix_len(char **input);

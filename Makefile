@@ -60,7 +60,8 @@ re: fclean all
 
 e: 	all
 	clear
-	valgrind --leak-check=full --track-origins=yes ./minishell
+#valgrind --leak-check=full --track-origins=yes ./minishell
+	./minishell
 
 push:
 	git add .

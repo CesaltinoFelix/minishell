@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_expand_var2.c                                   :+:      :+:    :+:   */
+/*   ft_expand_var1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:01:34 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/25 16:03:25 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 12:06:45 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,25 @@ void	expand_env_variable(t_minishell *shell)
 		remove_env_variable_from_input(shell);
 	else
 		replace_env_variable_in_input(shell);
+}
+
+void	expand_single_env_variable(t_minishell *shell, char **current)
+{
+	if (ft_aux_expand_single_env(shell, current))
+		return ;
+	else
+	{
+		while (ft_isalnum(*(shell->var_exp.end))
+			|| *(shell->var_exp.end) == '_')
+			shell->var_exp.end++;
+		if (shell->var_exp.end == shell->var_exp.start + 1)
+		{
+			*current = shell->var_exp.start + 1;
+			return ;
+		}
+	}
+	expand_env_variable(shell);
+	*current = shell->input;
 }
 
 void	expand_all_env_variables(t_minishell *shell)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_expand_var2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:01:34 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/25 16:06:09 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 12:06:53 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,17 @@ void	replace_env_variable_in_input(t_minishell *shell)
 	shell->input = updated_input;
 }
 
-void	expand_single_env_variable(t_minishell *shell, char **current)
+int	ft_aux_expand_single_env(t_minishell *shell, char **current)
 {
+	if (*(shell->var_exp.start) == '$' && *(shell->var_exp.start + 1) == '$')
+	{
+		*current = shell->var_exp.start + 2;
+		return (1);
+	}
 	if (count_backslashes_before(shell->input, shell->var_exp.start) % 2 == 1)
 	{
 		*current = shell->var_exp.start + 1;
-		return ;
+		return (1);
 	}
 	shell->var_exp.end = shell->var_exp.start + 1;
 	if (*(shell->var_exp.end) == '?')
@@ -82,17 +87,5 @@ void	expand_single_env_variable(t_minishell *shell, char **current)
 		shell->display_exit_status = 1;
 		shell->var_exp.end++;
 	}
-	else
-	{
-		while (ft_isalnum(*(shell->var_exp.end))
-			|| *(shell->var_exp.end) == '_')
-			shell->var_exp.end++;
-		if (shell->var_exp.end == shell->var_exp.start + 1)
-		{
-			*current = shell->var_exp.start + 1;
-			return ;
-		}
-	}
-	expand_env_variable(shell);
-	*current = shell->input;
+	return (0);
 }
