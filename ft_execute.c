@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/25 16:16:37 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 09:22:40 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,31 @@ int	execute_command(t_minishell *shell)
 		return (execute_external_command(shell));
 }
 
+void	free_pipeline(t_pipeline *cmds, int cmd_count)
+{
+	int	i;
+	int	j;
+
+	if (!cmds)
+		return ;
+	i = -1;
+	while (++i < cmd_count)
+	{
+		if (cmds[i].cmd_args)
+		{
+			j = -1;
+			while (cmds[i].cmd_args[++j])
+				free(cmds[i].cmd_args[j]);
+			free(cmds[i].cmd_args);
+		}
+		if (cmds[i].fd_in != STDIN_FILENO)
+			close(cmds[i].fd_in);
+		if (cmds[i].fd_out != STDOUT_FILENO)
+			close(cmds[i].fd_out);
+	}
+	free(cmds);
+}
+
 void	process_user_input(t_minishell *shell)
 {
 	int			cmd_count;
@@ -91,7 +116,7 @@ void	process_user_input(t_minishell *shell)
 		return ;
 	}
 	expand_all_env_variables(shell);
-	shell->parsed_input = tokenize_input(shell);
+	tokenize_input(shell);
 	cmds = split_commands(shell, &cmd_count);
 	if (cmd_count > 1)
 		execute_pipeline(shell, cmds, cmd_count);
@@ -105,31 +130,5 @@ void	process_user_input(t_minishell *shell)
 		execute_command(shell);
 	}
 	ft_restore_stdio(shell);
-	free(cmds);
-}
-
-void	run_shell(t_minishell *shell)
-{
-	char	*trimmed_input;
-
-	while (1)
-	{
-		shell->input = readline("minishell> ");
-		if (!shell->input)
-		{
-			printf("exit\n");
-			break ;
-		}
-		trimmed_input = trim_whitespace(shell->input);
-		free(shell->input);
-		shell->input = trimmed_input;
-		if (*shell->input)
-		{
-			add_history(shell->input);
-			process_user_input(shell);
-		}
-		check_to_free(shell);
-	}
-	ft_free_matrix(shell->env_variables);
-	check_to_free(shell);
+	free_pipeline(cmds, cmd_count);
 }

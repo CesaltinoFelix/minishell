@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/27 12:23:34 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/08 09:04:55 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,26 @@ int	is_builtin(char *cmd)
 		|| ft_strcmp(cmd, "exit") == 0);
 }
 
-void	init_cmd(t_pipeline *cmd, char **input, int i)
+void	init_cmd(t_pipeline *cmd, char **input, int start_idx)
 {
-	cmd->cmd_args = &input[i];
+	int	i;
+	int	count;
+
+	i = start_idx;
+	count = 0;
+	while (input[i] && ft_strcmp(input[i], "|") != 0)
+	{
+		count++;
+		i++;
+	}
+	cmd->cmd_args = malloc(sizeof(char *) * (count + 1));
+	i = 0;
+	while (i < count)
+	{
+		cmd->cmd_args[i] = ft_strdup(input[start_idx + i]);
+		i++;
+	}
+	cmd->cmd_args[count] = NULL;
 	cmd->fd_in = STDIN_FILENO;
 	cmd->fd_out = STDOUT_FILENO;
 }
@@ -34,8 +51,8 @@ char	*get_output_file(char **cmd_args)
 	i = 0;
 	while (cmd_args[i])
 	{
-		if (ft_strcmp(cmd_args[i], ">") == 0 || \
-ft_strcmp(cmd_args[i], ">>") == 0)
+		if (ft_strcmp(cmd_args[i], ">") == 0
+			|| ft_strcmp(cmd_args[i], ">>") == 0)
 		{
 			if (cmd_args[i + 1])
 				return (cmd_args[i + 1]);

@@ -3,6 +3,7 @@ CC = cc
 CFLAGS =  -Wall -Wextra -Werror -lreadline -lhistory
 SRCS =	main.c \
 	ft_execute.c \
+	ft_run_shell.c \
 	./utils/ft_free.c \
 	./utils/ft_utils.c \
 	./utils/ft_signals.c \
@@ -59,7 +60,7 @@ re: fclean all
 
 e: 	all
 	clear
-	./minishell 
+	valgrind --leak-check=full --track-origins=yes ./minishell
 
 push:
 	git add .
