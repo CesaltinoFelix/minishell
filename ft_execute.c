@@ -86,29 +86,21 @@ int	execute_command(t_minishell *shell)
 		return (execute_external_command(shell));
 }
 
-void	free_pipeline(t_pipeline *cmds, int cmd_count)
+int	aux_process_user_input(t_minishell *shell)
 {
-	int	i;
-	int	j;
 
-	if (!cmds)
-		return ;
-	i = -1;
-	while (++i < cmd_count)
+	if (get_quote_status(shell->input) == -1)
 	{
-		if (cmds[i].cmd_args)
-		{
-			j = -1;
-			while (cmds[i].cmd_args[++j])
-				free(cmds[i].cmd_args[j]);
-			free(cmds[i].cmd_args);
-		}
-		if (cmds[i].fd_in != STDIN_FILENO)
-			close(cmds[i].fd_in);
-		if (cmds[i].fd_out != STDOUT_FILENO)
-			close(cmds[i].fd_out);
+		shell->exit_status = 2;
+		return (1);
 	}
-	free(cmds);
+	expand_all_env_variables(shell);
+	if (!shell->input || *shell->input == '\0')
+	{
+		shell->exit_status = 0;
+		return (1);
+	}
+	return (0);
 }
 
 void	process_user_input(t_minishell *shell)
@@ -116,12 +108,8 @@ void	process_user_input(t_minishell *shell)
 	int			cmd_count;
 	t_pipeline	*cmds;
 
-	if (get_quote_status(shell->input) == -1)
-	{
-		shell->exit_status = 2;
+	if (aux_process_user_input(shell))
 		return ;
-	}
-	expand_all_env_variables(shell);
 	tokenize_input(shell);
 	cmds = split_commands(shell, &cmd_count);
 	if (cmd_count > 1)

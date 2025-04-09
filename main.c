@@ -23,6 +23,6 @@ int	main(int argc, char const *argv[], char *env[])
 	init_shell(&shell, env);
 	run_shell(&shell);
 	if (g_status == 130)
-		shell.exit_status = 130;
+		shell.exit_status = g_status;
 	return (shell.exit_status);
 }

@@ -90,6 +90,7 @@ void		remove_env_variable_from_input(t_minishell *shell);
 void		expand_env_variable(t_minishell *shell);
 void		remove_redirection(t_minishell *shell, int i);
 void		init_cmd(t_pipeline *cmd, char **input, int i);
+void		free_pipeline(t_pipeline *cmds, int cmd_count);
 void		execute_pipeline(t_minishell *shell, \
 t_pipeline *cmds, int cmd_count);
 void		expand_all_env_variables(t_minishell *shell);

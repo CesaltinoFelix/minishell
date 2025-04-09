@@ -81,7 +81,6 @@ void	handle_exit_command(t_minishell *shell)
 			shell->exit_status = 1;
 			return ;
 		}
-		
 	}
 	check_to_free(shell);
 	exit(shell->exit_status);
