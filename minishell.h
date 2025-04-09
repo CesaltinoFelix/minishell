@@ -52,6 +52,7 @@ typedef struct s_minishell
 	char		**parsed_input;
 	char		**system_paths;
 	char		**env_variables;
+	char		last_heredoc_file[128];
 	char		*previous_directory;
 	char		*current_directory;
 	int			exit_status;
@@ -137,7 +138,6 @@ int			ft_aux_expand_single_env(t_minishell *shell, char **current);
 int			is_quote(char c);
 int			is_redirection(char c);
 int			ft_matrix_len(char **input);
-int			ft_handle_heredoc(t_minishell *shell, int i);
 int			get_quote_status(char *str);
 int			validate_unset_option(char **args);
 int			unquoted_strlen(const char *str);
@@ -146,6 +146,7 @@ int			count_backslashes_before(char *str, char *pos);
 int			is_valid_env_var_name(const char *name);
 int			ft_handle_redirections(t_minishell *shell);
 int			copy_without_quotes(char *dest, const char *src, int size);
+int			ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path);
 int			is_env_var_match(const char *env_var, \
 const char *key, size_t key_len);
 int			find_and_update_env_var(t_minishell *shell, char *new_var);

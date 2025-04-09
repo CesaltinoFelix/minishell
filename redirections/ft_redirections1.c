@@ -12,6 +12,8 @@
 
 #include "./../minishell.h"
 
+int redirect_heredoc_input(t_minishell *shell, char *file);
+
 static int	open_output_file(t_minishell *shell, int i, int flags)
 {
 	int	fd;
@@ -64,10 +66,7 @@ static int	handle_input_redir(t_minishell *shell, int i)
 		shell->stdin_backup = dup(STDIN_FILENO);
 	fd = open(shell->parsed_input[i + 1], O_RDONLY);
 	if (fd == -1)
-	{
-		perror("minishell: error opening file");
-		return (-1);
-	}
+		return (perror("minishell: error opening file"), -1);
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: error redirecting");
@@ -78,7 +77,7 @@ static int	handle_input_redir(t_minishell *shell, int i)
 	return (0);
 }
 
-static int	process_redirection(t_minishell *shell, int *i)
+int	aux_process_redirection(t_minishell *shell, int *i)
 {
 	if (is_output_redirection(shell->parsed_input[*i]))
 	{
@@ -90,10 +89,21 @@ static int	process_redirection(t_minishell *shell, int *i)
 		if (handle_input_redir(shell, *i) == -1)
 			return (-1);
 	}
+	return (0);
+}
+
+static int	process_redirection(t_minishell *shell, int *i)
+{
+	char temp_file[128];
+	
+	if (aux_process_redirection(shell, i) == -1)
+		return (-1);
 	else if (!ft_strcmp(shell->parsed_input[*i], "<<"))
 	{
-		if (ft_handle_heredoc(shell, *i) == -1)
+		ft_bzero(temp_file, sizeof(temp_file));
+		if (ft_handle_heredoc(shell, *i, temp_file) == -1)
 			return (-1);
+		ft_memcpy(shell->last_heredoc_file, temp_file, sizeof(shell->last_heredoc_file));
 	}
 	else
 	{
@@ -117,6 +127,11 @@ int	ft_handle_redirections(t_minishell *shell)
 			return (-1);
 		if (ret == 1)
 			continue ;
+	}
+	if (shell->last_heredoc_file[0])
+	{
+		if (redirect_heredoc_input(shell, shell->last_heredoc_file) == -1)
+			return (-1);
 	}
 	return (0);
 }

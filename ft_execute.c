@@ -133,6 +133,7 @@ void	process_user_input(t_minishell *shell)
 			shell->exit_status = 2;
 			return ;
 		}
+		shell->last_heredoc_file[0] = '\0';
 		execute_command(shell);
 	}
 	ft_restore_stdio(shell);

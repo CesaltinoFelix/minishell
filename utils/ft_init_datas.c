@@ -38,6 +38,7 @@ void	init_shell(t_minishell *shell, char *env[])
 	shell->input = NULL;
 	shell->parsed_input = NULL;
 	shell->system_paths = NULL;
+	ft_bzero(shell->last_heredoc_file, sizeof(shell->last_heredoc_file));
 	shell->previous_directory = NULL;
 	shell->current_directory = NULL;
 	shell->last_exit_code = 0;
