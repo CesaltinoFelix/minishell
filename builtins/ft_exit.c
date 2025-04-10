@@ -6,23 +6,38 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:54 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/08 14:04:02 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/10 14:15:34 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void verify_range(t_minishell *shell, long long int res)
+int	verify_range(t_minishell *shell, char **ptr, long long int *result, int signal)
 {
-	printf("%lld", res);
-	if (res > LLONG_MAX || res < LLONG_MIN)
+	int	digit;
+	
+	while (ft_isdigit(**ptr))
 	{
-		printf("minishell: exit: %s: numeric argument required\n", \
+		digit = **ptr - '0';
+		if ((signal == 1 && *result > (LLONG_MAX - digit) / 10) ||
+		(signal == -1 && *result > (-(LLONG_MIN + digit)) / 10))
+		{
+			printf("minishell: exit: %s: numeric argument required\n",
+			shell->parsed_input[1]);
+			shell->exit_status = 2;
+			return (1);
+		}
+		*result = *result * 10 + digit;
+		(*ptr)++;
+	}
+	if (**ptr != '\0')
+	{
+		printf("minishell: exit: %s: numeric argument required\n",
 		shell->parsed_input[1]);
 		shell->exit_status = 2;
-		return ;
+		return (1);
 	}
-	shell->exit_status =  (res  & 255);
+	return (0);
 }
 
 void	ft_atoi2(t_minishell *shell,char *ptr)
@@ -40,33 +55,10 @@ void	ft_atoi2(t_minishell *shell,char *ptr)
 			signal = -1;
 		ptr++;
 	}
-	while (ft_isdigit(*ptr))
-		result = result * 10 + (*ptr++ - '0');
-	if (*ptr != '\0')
-	{
-		printf("minishell: exit: %s: numeric argument required\n", \
-		shell->parsed_input[1]);
-		shell->exit_status = 2;
-		return;
-	}
-	verify_range(shell, result * signal);
+	if (verify_range(shell, &ptr, &result, signal) != 0)
+		return ;
+	shell->exit_status = (int)((result * signal) & 255);
 }
-// int	is_valid_numeric_argument(const char *str)
-// {
-// 	if (!str || !*str)
-// 		return (0);
-// 	if (*str == '-' || *str == '+')
-// 		str++;
-// 	while (*str == ' ')
-// 		str++;
-// 	while (*str)
-// 	{
-// 		if (!ft_isdigit(*str))
-// 			return (0);
-// 		str++;
-// 	}
-// 	return (1);
-// }
 
 void	handle_exit_command(t_minishell *shell)
 {

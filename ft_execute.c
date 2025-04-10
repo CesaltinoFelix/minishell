@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/08 12:02:10 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:06:29 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,11 +118,13 @@ void	process_user_input(t_minishell *shell)
 	{
 		if (ft_handle_redirections(shell) == -1)
 		{
+			if (shell->exit_status == 130)
+				return ;
 			shell->exit_status = 2;
 			return ;
 		}
 		shell->last_heredoc_file[0] = '\0';
-		execute_command(shell);
+		shell->exit_status = execute_command(shell);
 	}
 	ft_restore_stdio(shell);
 	free_pipeline(cmds, cmd_count);

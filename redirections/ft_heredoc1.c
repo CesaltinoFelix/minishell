@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_heredoc.c                                       :+:      :+:    :+:   */
+/*   ft_heredoc1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/03/13 14:09:03 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/10 19:07:49 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,10 @@ int ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path)
     if (pid == -1)
         return (-1);
     if (wait_for_heredoc(shell, pid, file) == -1)
+    {
+        restore_sigint(); // Restaurar SIGINT   
         return (-1);
+    }
     restore_sigint(); // Restaurar SIGINT
     ft_memcpy(heredoc_path, file, 128); // Copiamos o caminho do arquivo gerado
     return (0);
