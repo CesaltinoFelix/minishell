@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:21 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/27 12:12:11 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/11 11:03:24 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,17 +77,19 @@ static int	handle_input_redir(t_minishell *shell, int i)
 	return (0);
 }
 
-int	aux_process_redirection(t_minishell *shell, int *i)
+int	aux_process_redirection(t_minishell *shell, int *i, int *res)
 {
 	if (is_output_redirection(shell->parsed_input[*i]))
 	{
 		if (handle_output_redir(shell, *i) == -1)
 			return (-1);
+		*res =  1;
 	}
 	else if (!ft_strcmp(shell->parsed_input[*i], "<"))
 	{
 		if (handle_input_redir(shell, *i) == -1)
 			return (-1);
+		*res =  1;
 	}
 	return (0);
 }
@@ -95,8 +97,10 @@ int	aux_process_redirection(t_minishell *shell, int *i)
 static int	process_redirection(t_minishell *shell, int *i)
 {
 	char temp_file[128];
-	
-	if (aux_process_redirection(shell, i) == -1)
+	int res;
+
+	res = 0;
+	if (aux_process_redirection(shell, i, &res) == -1)
 		return (-1);
 	else if (!ft_strcmp(shell->parsed_input[*i], "<<"))
 	{
@@ -105,7 +109,7 @@ static int	process_redirection(t_minishell *shell, int *i)
 			return (-1);
 		ft_memcpy(shell->last_heredoc_file, temp_file, sizeof(shell->last_heredoc_file));
 	}
-	else
+	else if(res == 0)
 	{
 		(*i)++;
 		return (1);
