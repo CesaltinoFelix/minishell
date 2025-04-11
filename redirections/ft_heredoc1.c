@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/10 19:07:49 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:51:06 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path)
     char file[128];
 
     g_heredoc_interrupted = 0;
-    ignore_sigint(); // Ignorar SIGINT no processo pai
+    ignore_sigint(); 
     fd = create_temp_file(file);
     if (!shell->parsed_input[i + 1])
         return(printf("minishell: syntax error near unexpected token `newline'\n"), -1);
@@ -111,10 +111,10 @@ int ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path)
         return (-1);
     if (wait_for_heredoc(shell, pid, file) == -1)
     {
-        restore_sigint(); // Restaurar SIGINT   
+        restore_sigint();
         return (-1);
     }
-    restore_sigint(); // Restaurar SIGINT
-    ft_memcpy(heredoc_path, file, 128); // Copiamos o caminho do arquivo gerado
+    restore_sigint();
+    ft_memcpy(heredoc_path, file, 128);
     return (0);
 }

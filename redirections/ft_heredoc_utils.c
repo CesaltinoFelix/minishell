@@ -45,10 +45,9 @@ int wait_for_heredoc(t_minishell *shell, int pid, char *file)
 {
     int status;
     int exit_status;
-    // int signal_number;
 
-    waitpid(pid, &status, 0); // Aguarda o término do processo filho
-    if (WIFEXITED(status)) // Se o processo filho terminou normalmente
+    waitpid(pid, &status, 0);
+    if (WIFEXITED(status))
     {
         exit_status = WEXITSTATUS(status);
         if (exit_status == 130)
@@ -57,14 +56,5 @@ int wait_for_heredoc(t_minishell *shell, int pid, char *file)
             return (unlink(file), -1);
         }
     }
-    // else if (WIFSIGNALED(status)) // Se o processo filho foi terminado por um sinal
-    // {
-    //     printf("Debug: I'm here\n");
-    //     signal_number = WTERMSIG(status); // Obtém o número do sinal
-    //     if (signal_number == SIGINT) // Heredoc interrompido com Ctrl+C
-    //     {
-    //         return (unlink(file), -1);
-    //     }
-    // }
     return (0);
 }

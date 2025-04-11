@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_manipulation_str.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:01:58 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/11 12:51:29 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/11 13:33:13 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ char	**tokenize_input(t_minishell *shell)
 	char	**tokens;
 
 	tokens = ft_split_quoted(shell->input, ' ');
-	print_matrix(tokens);
 	if (!tokens)
 		return (NULL);
 	shell->parsed_input = tokens;

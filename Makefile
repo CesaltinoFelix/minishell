@@ -43,7 +43,6 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(OBJS) $(LIBFT) -o $(NAME) $(CFLAGS)
-	rm -f $(OBJS)
 
 $(LIBFT):
 	$(MAKE) -C $(L_DIR)
@@ -57,15 +56,5 @@ fclean: clean
 	@$(MAKE) fclean -C $(L_DIR)
 
 re: fclean all
-
-e: 	all
-	clear
-	valgrind --leak-check=full --track-origins=yes ./minishell
-#./minishell
-
-push:
-	git add .
-	git commit -m "Updating code"
-	git push
 
 .PHONY: all clean fclean re push

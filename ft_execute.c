@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/11 12:50:14 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/11 13:54:55 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,15 @@ void	process_user_input(t_minishell *shell)
 		if (ft_handle_redirections(shell) == -1)
 		{
 			if (shell->exit_status == 130)
+			{
+				free_pipeline(cmds, cmd_count);
 				return ;
+			}
 			shell->exit_status = 2;
 			return ;
 		}
 		shell->last_heredoc_file[0] = '\0';
-		shell->exit_status = execute_command(shell);
+		shell->exit_status = execute_command(shell);	
 	}
 	ft_restore_stdio(shell);
 	free_pipeline(cmds, cmd_count);
