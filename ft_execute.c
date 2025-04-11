@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/10 19:06:29 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:50:14 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,12 @@ int	execute_external_command(t_minishell *shell)
 
 int	execute_command(t_minishell *shell)
 {
+	int token_count;
+	
+	char **token = shell->parsed_input;
+	token_count = ft_matrix_len(shell->parsed_input);
+	shell->parsed_input = duplicate_matrix_without_quotes(shell->parsed_input, token_count);
+	ft_free_matrix(token);
 	if (ft_strcmp(shell->parsed_input[0], "echo") == 0)
 		return (handle_echo_command(shell));
 	else if (ft_strcmp(shell->parsed_input[0], "cd") == 0)

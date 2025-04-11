@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:01:58 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/04 13:47:38 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/11 12:51:29 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,12 @@ char	**duplicate_matrix_without_quotes(char **matrix, int size)
 char	**tokenize_input(t_minishell *shell)
 {
 	char	**tokens;
-	int		token_count;
 
 	tokens = ft_split_quoted(shell->input, ' ');
+	print_matrix(tokens);
 	if (!tokens)
 		return (NULL);
-	token_count = ft_matrix_len(tokens);
-	shell->parsed_input = duplicate_matrix_without_quotes(tokens, token_count);
-	ft_free_matrix(tokens);
+	shell->parsed_input = tokens;
 	if (shell->parsed_input == NULL)
 		return (NULL);
 	return (shell->parsed_input);

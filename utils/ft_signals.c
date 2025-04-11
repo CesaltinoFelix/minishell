@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_signals.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:48:46 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/10 10:44:07 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:08:36 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,5 @@ void	initialize_signal_handlers(void)
 		perror("sigaction(SIGINT) failed");
 		exit(1);
 	}
+	signal(SIGQUIT, SIG_IGN);
 }
