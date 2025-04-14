@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/11 12:32:47 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/14 15:30:24 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ char		*create_env_var_string(t_minishell *shell);
 char		*allocate_updated_input(size_t updated_len);
 char		*get_output_file(char **cmd_args);
 char		*get_input_file(char **cmd_args);
+int is_append_mode(char **cmd_args);
 
 char		**tokenize_input(t_minishell *shell);
 char		**ft_cpy_env_variables(char *env[]);
