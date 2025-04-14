@@ -6,11 +6,31 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/11 13:54:55 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:34:27 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int wait_for_signal(int pid)
+{
+	int	sig;
+	int	status;
+	int	exit_status;
+
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		sig = WTERMSIG(status);
+		exit_status = 128 + sig;
+		if (sig == SIGINT)
+			write(1, "\n", 1);
+	}
+	signal(SIGINT, sigint_handler);
+	return (exit_status);
+}
 
 void	ft_run_execve(t_minishell *shell, int *i, char **path)
 {
@@ -18,7 +38,7 @@ void	ft_run_execve(t_minishell *shell, int *i, char **path)
 
 	while (shell->system_paths[++(*i)])
 	{
-		if (shell->parsed_input[0][0] == '/')
+		if (shell->parsed_input[0][0] == '/' || shell->parsed_input[0][0] == '.')
 			execve(shell->parsed_input[0], shell->parsed_input,
 			shell->env_variables);
 		else
@@ -41,14 +61,17 @@ int	execute_external_command(t_minishell *shell)
 	pid_t	pid;
 	char	*path;
 	int		i;
+	int		signal_status;
 
 	i = -1;
 	path = NULL;
+	signal(SIGINT, SIG_IGN);
 	pid = fork();
 	if (pid == -1)
-		return (perror("fork"), 1);
+		return (-1);
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		path = getenv("PATH");
 		shell->system_paths = ft_split(path, ':');
 		if (!shell->system_paths)
@@ -58,9 +81,8 @@ int	execute_external_command(t_minishell *shell)
 		ft_free_matrix(shell->system_paths);
 		exit(127);
 	}
-	else
-		waitpid(pid, &shell->exit_status, 0);
-	return (WEXITSTATUS(shell->exit_status));
+	signal_status = wait_for_signal(pid);
+	return (signal_status);
 }
 
 int	execute_command(t_minishell *shell)
@@ -133,7 +155,7 @@ void	process_user_input(t_minishell *shell)
 			return ;
 		}
 		shell->last_heredoc_file[0] = '\0';
-		shell->exit_status = execute_command(shell);	
+		shell->exit_status = execute_command(shell);
 	}
 	ft_restore_stdio(shell);
 	free_pipeline(cmds, cmd_count);

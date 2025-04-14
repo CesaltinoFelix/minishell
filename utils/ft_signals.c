@@ -6,14 +6,13 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:48:46 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/11 13:43:05 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/14 11:38:17 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 int	g_status = 0;
-int	g_heredoc_interrupted = 0;
 
 void	sigint_handler(int sig)
 {
@@ -27,15 +26,6 @@ void	sigint_handler(int sig)
 
 void	initialize_signal_handlers(void)
 {
-	struct sigaction	sa_int;
-
-	sa_int.sa_handler = sigint_handler;
-	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_flags = 0;
-	if (sigaction(SIGINT, &sa_int, NULL) == -1)
-	{
-		perror("sigaction(SIGINT) failed");
-		exit(1);
-	}
+	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 }

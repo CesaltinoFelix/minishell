@@ -1,11 +1,11 @@
 #include "./../minishell.h"
 
-extern int g_heredoc_interrupted;
+extern int g_status;
 
 void heredoc_signal_handler(int sig)
 {
     (void)sig;
-    g_heredoc_interrupted = 1;
+    g_status = 1;
     write(1, "\n", 1);
     rl_replace_line("", 0); 
     exit(130);
@@ -13,32 +13,17 @@ void heredoc_signal_handler(int sig)
 
 void setup_heredoc_signals()
 {
-    struct sigaction sa_int;
-    
-    sa_int.sa_handler = heredoc_signal_handler;
-    sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = 0;
-    sigaction(SIGINT, &sa_int, NULL);
+    signal(SIGINT, heredoc_signal_handler);
 }
 
 void ignore_sigint()
 {
-    struct sigaction sa_ignore;
-    
-    sa_ignore.sa_handler = SIG_IGN;
-    sigemptyset(&sa_ignore.sa_mask);
-    sa_ignore.sa_flags = 0;
-    sigaction(SIGINT, &sa_ignore, NULL);
+    signal(SIGINT, SIG_IGN);
 }
 
 void restore_sigint()
 {
-    struct sigaction sa_default;
-    
-    sa_default.sa_handler = sigint_handler;
-    sigemptyset(&sa_default.sa_mask);
-    sa_default.sa_flags = 0;
-    sigaction(SIGINT, &sa_default, NULL);
+    signal(SIGINT, sigint_handler);
 }
 
 int wait_for_heredoc(t_minishell *shell, int pid, char *file)

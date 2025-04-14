@@ -6,13 +6,13 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/11 13:51:06 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/14 13:30:18 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./../minishell.h"
 
-extern int g_heredoc_interrupted;
+extern int g_status;
 
 int read_heredoc_input(int fd, t_minishell *shell, int i)
 {
@@ -20,7 +20,7 @@ int read_heredoc_input(int fd, t_minishell *shell, int i)
 
     while (1)
     {
-        if (g_heredoc_interrupted)
+        if (g_status)
             return (-1);
         line = readline("> ");
         if (!line)
@@ -99,7 +99,7 @@ int ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path)
     int pid;
     char file[128];
 
-    g_heredoc_interrupted = 0;
+    g_status = 0;
     ignore_sigint(); 
     fd = create_temp_file(file);
     if (!shell->parsed_input[i + 1])
