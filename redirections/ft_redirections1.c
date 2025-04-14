@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redirections1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:21 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/11 12:34:32 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/14 16:38:18 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ static int	handle_input_redir(t_minishell *shell, int i)
 		shell->stdin_backup = dup(STDIN_FILENO);
 	fd = open(shell->parsed_input[i + 1], O_RDONLY);
 	if (fd == -1)
-		return (perror("minishell: error opening file"), -1);
+		return (printf("minishell: %s: No such file or directory\n",
+		shell->parsed_input[i + 1]), -1);
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: error redirecting");

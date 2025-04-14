@@ -30,9 +30,9 @@ SRCS =	main.c \
 	./redirections/ft_redirections1.c \
 	./redirections/ft_redirections2.c \
 	./redirections/ft_heredoc_utils.c \
-	./redirections/ft_pipe1.c \
-	./redirections/ft_pipe2.c \
-	./redirections/ft_pipe3.c \
+	./pipe/ft_pipe1.c \
+	./pipe/ft_pipe2.c \
+	./pipe/ft_pipe3.c \
 	./redirections/ft_redirections_utils.c \
 	./debug.c 
 

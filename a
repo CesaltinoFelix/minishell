@@ -2,7 +2,6 @@ a
 builtins
 debug.c
 debug.o
-en.subject.pdf
 ft_execute.c
 ft_execute.o
 ft_run_shell.c
@@ -13,6 +12,7 @@ main.o
 Makefile
 minishell
 minishell.h
+pipe
 README.md
 redirections
 tokens

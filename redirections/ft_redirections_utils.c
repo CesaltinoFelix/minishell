@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_redirections_utils.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:41:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/25 16:41:32 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/14 16:45:34 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,21 @@ void	remove_redirection(t_minishell *shell, int i)
 	}
 	shell->parsed_input[j] = NULL;
 	shell->parsed_input[j + 1] = NULL;
+}
+
+int	exec_redirection(t_minishell *shell, t_pipeline	*cmds, int cmd_count)
+{
+	if (ft_handle_redirections(shell) == -1)
+	{
+		if (shell->exit_status == 130)
+		{
+			free_pipeline(cmds, cmd_count);
+			return (-1);
+		}
+		shell->exit_status = 2;
+		return (-1);
+	}
+	return (0);
 }
 
 void	ft_restore_stdio(t_minishell *shell)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 15:30:24 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/14 16:30:36 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,8 @@ int			is_output_redirection(char *str);
 int			handle_redirection_error(t_minishell *shell, int i);
 int			set_output_flags(char *redir_type);
 int			is_builtin(char *cmd);
-
+int			wait_for_signal(int pid);
+int			exec_redirection(t_minishell *shell, t_pipeline	*cmds, int cmd_count);
 size_t		count_tokens(const char *input, char delimiter);
 
 t_pipeline	*split_commands(t_minishell *shell, int *cmd_count);

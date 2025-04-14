@@ -6,31 +6,11 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 15:34:27 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/14 16:29:49 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int wait_for_signal(int pid)
-{
-	int	sig;
-	int	status;
-	int	exit_status;
-
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-	{
-		sig = WTERMSIG(status);
-		exit_status = 128 + sig;
-		if (sig == SIGINT)
-			write(1, "\n", 1);
-	}
-	signal(SIGINT, sigint_handler);
-	return (exit_status);
-}
 
 void	ft_run_execve(t_minishell *shell, int *i, char **path)
 {
@@ -144,16 +124,8 @@ void	process_user_input(t_minishell *shell)
 		execute_pipeline(shell, cmds, cmd_count);
 	else
 	{
-		if (ft_handle_redirections(shell) == -1)
-		{
-			if (shell->exit_status == 130)
-			{
-				free_pipeline(cmds, cmd_count);
-				return ;
-			}
-			shell->exit_status = 2;
+		if (exec_redirection(shell, cmds, cmd_count) == -1)
 			return ;
-		}
 		shell->last_heredoc_file[0] = '\0';
 		shell->exit_status = execute_command(shell);
 	}
