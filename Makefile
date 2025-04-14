@@ -5,7 +5,8 @@ SRCS =	main.c \
 	ft_execute.c \
 	ft_run_shell.c \
 	./utils/ft_free.c \
-	./utils/ft_utils.c \
+	./utils/ft_utils1.c \
+	./utils/ft_utils2.c \
 	./utils/ft_signals.c \
 	./utils/ft_init_datas.c \
 	./utils/ft_file_error.c \

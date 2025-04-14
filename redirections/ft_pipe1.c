@@ -6,7 +6,7 @@
 /*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/08 09:19:05 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/14 15:27:52 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,14 @@ void	apply_redirections(char **cmd_args)
 	char	*output_file;
 	char	*input_file;
 	int		fd;
+	int flags;
 
+	flags = is_append_mode(cmd_args);
 	output_file = get_output_file(cmd_args);
 	input_file = get_input_file(cmd_args);
 	if (output_file)
 	{
-		fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		fd = open(output_file, flags, 0644);
 		if (fd == -1)
 			exit(1);
 		dup2(fd, STDOUT_FILENO);
