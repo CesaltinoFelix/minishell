@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 17:10:11 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 19:44:48 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
 		execute_command(shell);
 	else
 		execute_external_command(shell);
+	ft_free_matrix(shell->parsed_input);
 	shell->parsed_input = parsed_input;
 	exit(shell->exit_status);
 }
