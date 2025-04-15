@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_run_shell.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/10 19:11:14 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:52:03 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	change_exit_status(t_minishell *shell)
 {
 	extern int	g_status;
-	
+
 	if (g_status == 130)
 		shell->exit_status = 130;
 	else
@@ -27,7 +27,7 @@ void	change_exit_status(t_minishell *shell)
 void	run_shell(t_minishell *shell)
 {
 	extern int	g_status;
-	char	*trimmed_input;
+	char		*trimmed_input;
 
 	while (1)
 	{

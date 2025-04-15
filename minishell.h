@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 16:44:30 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:44:11 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ int			handle_pwd_command(t_minishell *shell);
 int			handle_echo_command(t_minishell *shell);
 int			handle_unset_command(t_minishell *shell);
 int			handle_export_command(t_minishell *shell);
+int	handle_builtin_commands(t_minishell *shell);
 int			wait_for_heredoc(t_minishell *shell, int pid, char *file);
 int			ft_aux_expand_single_env(t_minishell *shell, char **current);
 int			is_quote(char c);
