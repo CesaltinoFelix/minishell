@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:08 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 17:57:44 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 21:12:56 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,21 @@ int	handle_builtin_commands(t_minishell *shell)
 		return (shell->exit_status);
 	}
 	return (-1);
+}
+
+void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
+	int prev_pipe_in, int pipes[2])
+{
+	char	**parsed_input;
+
+	parsed_input = shell->parsed_input;
+	setup_child_io(cmd, prev_pipe_in, pipes);
+	shell->parsed_input = cmd->cmd_args;
+	if (is_builtin(cmd->cmd_args[0]))
+		execute_command(shell);
+	else
+		execute_external_command(shell);
+	ft_free_matrix(shell->parsed_input);
+	shell->parsed_input = parsed_input;
+	exit(shell->exit_status);
 }

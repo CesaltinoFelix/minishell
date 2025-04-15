@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 18:00:28 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 21:18:57 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ void			copy_replacement_to_input(t_minishell *shell,
 void			remove_redirection_tokens(char **cmd_args, char *token);
 void			handle_child_process(t_minishell *shell, t_pipeline *cmd,
 					int prev_pipe_in, int pipes[2]);
+void	setup_child_io(t_pipeline *cmd, int prev_pipe_in, int pipes[2]);
 void			handle_parent_process(int i, int cmd_count, int pipes[2],
 					int *prev_pipe_in);
 void			skip_token(const char **input, char *quote, char delimiter);
