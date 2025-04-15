@@ -33,8 +33,7 @@ SRCS =	main.c \
 	./pipe/ft_pipe1.c \
 	./pipe/ft_pipe2.c \
 	./pipe/ft_pipe3.c \
-	./redirections/ft_redirections_utils.c \
-	./debug.c 
+	./redirections/ft_redirections_utils.c 
 
 OBJS = $(SRCS:.c=.o)
 L_DIR = ./libft
