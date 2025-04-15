@@ -6,13 +6,13 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 17:48:46 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/15 13:43:19 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:46:54 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	g_status = 0;
+int		g_status = 0;
 
 void	sigint_handler(int sig)
 {
@@ -30,7 +30,7 @@ void	initialize_signal_handlers(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-int wait_for_signal(int pid)
+int	wait_for_signal(int pid)
 {
 	int	sig;
 	int	status;

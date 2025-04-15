@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_heredoc2.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/15 17:29:24 by pcapalan          #+#    #+#             */
+/*   Updated: 2025/04/15 17:29:42 by pcapalan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	create_temp_file(char *file)
@@ -12,6 +24,7 @@ int	create_temp_file(char *file)
 		perror("error opening file");
 	return (fd);
 }
+
 int	process_heredoc(t_minishell *shell, int fd, int i, char *file)
 {
 	signal(SIGINT, heredoc_signal_handler);

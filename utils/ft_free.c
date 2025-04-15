@@ -6,12 +6,11 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:01:48 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 16:03:30 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:41:39 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
 
 void	free_pipeline(t_pipeline *cmds, int cmd_count)
 {

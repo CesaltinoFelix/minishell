@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 12:52:49 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/15 17:24:11 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:39:02 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ int	ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path)
 	ignore_sigint();
 	fd = create_temp_file(file);
 	if (!shell->parsed_input[i + 1])
-		return (printf("minishell: syntax error near "
-			"unexpected token `newline'\n"), -1);
+		return (printf("minishell: syntax error near"
+				" unexpected token `newline'\n"), -1);
 	if (fd == -1)
 		return (-1);
 	pid = handle_heredoc_child(fd, shell, i, file);

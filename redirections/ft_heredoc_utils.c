@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 12:56:38 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/15 17:14:47 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:32:08 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	redirect_heredoc_input(t_minishell *shell, char *file)
 
 	if (shell->stdin_backup == -1)
 		shell->stdin_backup = dup(STDIN_FILENO);
-	if ((fd = open(file, O_RDONLY)) == -1)
+	fd = open(file, O_RDONLY);
+	if (fd == -1)
 	{
 		perror("open");
 		printf("error: could not open heredoc file\n");
