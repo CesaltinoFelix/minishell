@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:21 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 13:10:25 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:12:36 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	handle_input_redir(t_minishell *shell, int i)
 	fd = open(shell->parsed_input[i + 1], O_RDONLY);
 	if (fd == -1)
 		return (printf("minishell: %s: No such file or directory\n",
-		shell->parsed_input[i + 1]), -1);
+				shell->parsed_input[i + 1]), -1);
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("minishell: error redirecting");
@@ -62,21 +62,21 @@ static int	aux_process_redirection(t_minishell *shell, int *i, int *res)
 	{
 		if (handle_output_redir(shell, *i) == -1)
 			return (-1);
-		*res =  1;
+		*res = 1;
 	}
 	else if (!ft_strcmp(shell->parsed_input[*i], "<"))
 	{
 		if (handle_input_redir(shell, *i) == -1)
 			return (-1);
-		*res =  1;
+		*res = 1;
 	}
 	return (0);
 }
 
 static int	process_redirection(t_minishell *shell, int *i)
 {
-	char temp_file[128];
-	int res;
+	char	temp_file[128];
+	int		res;
 
 	res = 0;
 	if (aux_process_redirection(shell, i, &res) == -1)
@@ -86,9 +86,10 @@ static int	process_redirection(t_minishell *shell, int *i)
 		ft_bzero(temp_file, sizeof(temp_file));
 		if (ft_handle_heredoc(shell, *i, temp_file) == -1)
 			return (-1);
-		ft_memcpy(shell->last_heredoc_file, temp_file, sizeof(shell->last_heredoc_file));
+		ft_memcpy(shell->last_heredoc_file, temp_file,
+			sizeof(shell->last_heredoc_file));
 	}
-	else if(res == 0)
+	else if (res == 0)
 	{
 		(*i)++;
 		return (1);

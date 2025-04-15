@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/08 09:16:34 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/15 17:10:48 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,16 @@ t_pipeline	*split_commands(t_minishell *shell, int *cmd_count)
 		return (NULL);
 	*cmd_count = fill_commands(cmds, shell->parsed_input);
 	return (cmds);
+}
+
+void	handle_parent_process(int i, int cmd_count, int pipes[2],
+		int *prev_pipe_in)
+{
+	if (i > 0)
+		close(*prev_pipe_in);
+	if (i < cmd_count - 1)
+	{
+		*prev_pipe_in = pipes[0];
+		close(pipes[1]);
+	}
 }

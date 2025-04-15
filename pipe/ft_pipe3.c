@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pipe3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/08 09:04:55 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/15 17:10:27 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ char	*get_output_file(char **cmd_args)
 	i = 0;
 	while (cmd_args[i])
 	{
-		if (ft_strcmp(cmd_args[i], ">") == 0
-			|| ft_strcmp(cmd_args[i], ">>") == 0)
+		if (ft_strcmp(cmd_args[i], ">") == 0 || ft_strcmp(cmd_args[i],
+				">>") == 0)
 		{
 			if (cmd_args[i + 1])
 				return (cmd_args[i + 1]);

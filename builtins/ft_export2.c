@@ -74,8 +74,8 @@ int	find_and_update_env_var(t_minishell *shell, char *new_var)
 	i = -1;
 	while (shell->env_variables[++i])
 	{
-		if (is_env_var_match(shell->env_variables[i], shell->env_var.key, \
-		shell->env_var.key_len))
+		if (is_env_var_match(shell->env_variables[i], shell->env_var.key,
+				shell->env_var.key_len))
 		{
 			if (shell->env_var.value)
 			{

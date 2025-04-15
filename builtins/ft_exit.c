@@ -6,24 +6,25 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:54 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 12:52:18 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:11:27 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	verify_range(t_minishell *shell, char **ptr, long long int *result, int signal)
+int	verify_range(t_minishell *shell, char **ptr, long long int *result,
+		int signal)
 {
 	int	digit;
-	
+
 	while (ft_isdigit(**ptr))
 	{
 		digit = **ptr - '0';
-		if ((signal == 1 && *result > (LLONG_MAX - digit) / 10) ||
-		(signal == -1 && *result > (-(LLONG_MIN + digit)) / 10))
+		if ((signal == 1 && *result > (LLONG_MAX - digit) / 10) || (signal == -1
+				&& *result > (-(LLONG_MIN + digit)) / 10))
 		{
 			printf("minishell: exit: %s: numeric argument required\n",
-			shell->parsed_input[1]);
+				shell->parsed_input[1]);
 			shell->exit_status = 2;
 			return (-1);
 		}
@@ -33,21 +34,21 @@ int	verify_range(t_minishell *shell, char **ptr, long long int *result, int sign
 	if (**ptr != '\0')
 	{
 		printf("minishell: exit: %s: numeric argument required\n",
-		shell->parsed_input[1]);
+			shell->parsed_input[1]);
 		shell->exit_status = 2;
 		return (-1);
 	}
 	return (0);
 }
 
-static int	ft_atoi2(t_minishell *shell,char *ptr)
+static int	ft_atoi2(t_minishell *shell, char *ptr)
 {
-	int	signal;
+	int				signal;
 	long long int	result;
 
 	signal = 1;
 	result = 0;
-	while (*ptr == 32 || (*ptr >= 9 &&  *ptr <= 13))
+	while (*ptr == 32 || (*ptr >= 9 && *ptr <= 13))
 		ptr++;
 	if (*ptr == 43 || *ptr == 45)
 	{
@@ -63,7 +64,6 @@ static int	ft_atoi2(t_minishell *shell,char *ptr)
 
 void	handle_exit_command(t_minishell *shell)
 {
-
 	printf("exit\n");
 	if (shell->parsed_input[1])
 		ft_atoi2(shell, shell->parsed_input[1]);

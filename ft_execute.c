@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 16:29:49 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 16:49:25 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@ void	ft_run_execve(t_minishell *shell, int *i, char **path)
 
 	while (shell->system_paths[++(*i)])
 	{
-		if (shell->parsed_input[0][0] == '/' || shell->parsed_input[0][0] == '.')
+		if (shell->parsed_input[0][0] == '/'
+		|| shell->parsed_input[0][0] == '.')
 			execve(shell->parsed_input[0], shell->parsed_input,
-			shell->env_variables);
+				shell->env_variables);
 		else
 		{
 			tmp = ft_strjoin(shell->system_paths[*i], "/");
@@ -67,9 +68,10 @@ int	execute_external_command(t_minishell *shell)
 
 int	execute_command(t_minishell *shell)
 {
-	int token_count;
+	int		token_count;
+	char	**token;
 	
-	char **token = shell->parsed_input;
+	token = shell->parsed_input;
 	token_count = ft_matrix_len(shell->parsed_input);
 	shell->parsed_input = duplicate_matrix_without_quotes(shell->parsed_input, token_count);
 	ft_free_matrix(token);

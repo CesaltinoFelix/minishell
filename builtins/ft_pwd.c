@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:03:02 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/24 12:50:32 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/15 17:11:39 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	handle_pwd_command(t_minishell *shell)
 	{
 		if (!ft_isalpha(shell->parsed_input[1][0]))
 		{
-			printf("%s: %s: invalid option\n",
-				shell->parsed_input[0], shell->parsed_input[1]);
+			printf("%s: %s: invalid option\n", shell->parsed_input[0],
+				shell->parsed_input[1]);
 			return (2);
 		}
 	}

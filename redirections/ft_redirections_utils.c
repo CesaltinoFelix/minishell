@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:41:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 13:14:58 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:12:33 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	remove_redirection(t_minishell *shell, int i)
 	shell->parsed_input[j + 1] = NULL;
 }
 
-int	exec_redirection(t_minishell *shell, t_pipeline	*cmds, int cmd_count)
+int	exec_redirection(t_minishell *shell, t_pipeline *cmds, int cmd_count)
 {
 	if (ft_handle_redirections(shell) == -1)
 	{

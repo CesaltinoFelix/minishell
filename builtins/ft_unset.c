@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:03:06 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 12:56:09 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:11:43 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ static int	is_env_var_unset(char *var_name, t_minishell *shell)
 	while (shell->parsed_input[i])
 	{
 		shell->env_var.key = shell->parsed_input[i];
-		if (is_env_var_match(var_name,
-				shell->env_var.key, ft_strlen(shell->env_var.key)))
+		if (is_env_var_match(var_name, shell->env_var.key,
+				ft_strlen(shell->env_var.key)))
 			return (1);
 		i++;
 	}
@@ -61,8 +61,8 @@ int	handle_unset_command(t_minishell *shell)
 
 	i = -1;
 	j = -1;
-	if (validate_unset_option(shell->parsed_input)
-		|| allocate_new_env(shell, &new_envarion))
+	if (validate_unset_option(shell->parsed_input) || allocate_new_env(shell,
+			&new_envarion))
 		return (2);
 	while (shell->env_variables[++i])
 	{

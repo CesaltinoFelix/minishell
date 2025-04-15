@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:28 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 15:54:49 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:10:11 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,25 @@ void	execute_pipeline(t_minishell *shell, t_pipeline *cmds, int cmd_count)
 	shell->exit_status = WEXITSTATUS(shell->exit_status);
 }
 
+static void	aux_apply_redirections(char **cmd_args, char *input_file, int fd)
+{
+	if (input_file)
+	{
+		fd = open(input_file, O_RDONLY);
+		if (fd == -1)
+			exit(1);
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+		remove_redirection_tokens(cmd_args, "<");
+	}
+}
+
 void	apply_redirections(char **cmd_args)
 {
 	char	*output_file;
 	char	*input_file;
 	int		fd;
-	int flags;
+	int		flags;
 
 	flags = is_append_mode(cmd_args);
 	output_file = get_output_file(cmd_args);
@@ -57,15 +70,7 @@ void	apply_redirections(char **cmd_args)
 		remove_redirection_tokens(cmd_args, ">");
 		remove_redirection_tokens(cmd_args, ">>");
 	}
-	if (input_file)
-	{
-		fd = open(input_file, O_RDONLY);
-		if (fd == -1)
-			exit(1);
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-		remove_redirection_tokens(cmd_args, "<");
-	}
+	aux_apply_redirections(cmd_args, input_file, fd);
 }
 
 static void	setup_child_io(t_pipeline *cmd, int prev_pipe_in, int pipes[2])
@@ -82,7 +87,7 @@ static void	setup_child_io(t_pipeline *cmd, int prev_pipe_in, int pipes[2])
 }
 
 void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
-	int prev_pipe_in, int pipes[2])
+		int prev_pipe_in, int pipes[2])
 {
 	char	**parsed_input;
 
@@ -95,16 +100,4 @@ void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
 		execute_external_command(shell);
 	shell->parsed_input = parsed_input;
 	exit(shell->exit_status);
-}
-
-void	handle_parent_process(int i, int cmd_count,
-		int pipes[2], int *prev_pipe_in)
-	{
-	if (i > 0)
-		close(*prev_pipe_in);
-	if (i < cmd_count - 1)
-	{
-		*prev_pipe_in = pipes[0];
-		close(pipes[1]);
-	}
 }

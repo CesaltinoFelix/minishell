@@ -6,14 +6,13 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 11:38:35 by pcapalan          #+#    #+#             */
-/*   Updated: 2025/04/15 12:38:40 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:11:30 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../minishell.h"
 
-static void ft_free_env_vars(t_minishell *shell)
+static void	ft_free_env_vars(t_minishell *shell)
 {
 	if (shell->env_var.key)
 		free(shell->env_var.key);
