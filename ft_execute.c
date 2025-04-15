@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 16:49:25 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:49:14 by cefelix          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,35 +70,21 @@ int	execute_command(t_minishell *shell)
 {
 	int		token_count;
 	char	**token;
-	
+	int		result;
+
 	token = shell->parsed_input;
 	token_count = ft_matrix_len(shell->parsed_input);
-	shell->parsed_input = duplicate_matrix_without_quotes(shell->parsed_input, token_count);
+	shell->parsed_input = \
+		duplicate_matrix_without_quotes(shell->parsed_input, token_count);
 	ft_free_matrix(token);
-	if (ft_strcmp(shell->parsed_input[0], "echo") == 0)
-		return (handle_echo_command(shell));
-	else if (ft_strcmp(shell->parsed_input[0], "cd") == 0)
-		return (handle_cd_command(shell));
-	else if (ft_strcmp(shell->parsed_input[0], "pwd") == 0)
-		return (handle_pwd_command(shell));
-	else if (ft_strcmp(shell->parsed_input[0], "export") == 0)
-		return (handle_export_command(shell));
-	else if (ft_strcmp(shell->parsed_input[0], "unset") == 0)
-		return (handle_unset_command(shell));
-	else if (ft_strcmp(shell->parsed_input[0], "env") == 0)
-		return (handle_env_command(shell));
-	else if (ft_strcmp(shell->parsed_input[0], "exit") == 0)
-	{
-		handle_exit_command(shell);
-		return (shell->exit_status);
-	}
-	else
-		return (execute_external_command(shell));
+	result = handle_builtin_commands(shell);
+	if (result != -1)
+		return (result);
+	return (execute_external_command(shell));
 }
 
 int	aux_process_user_input(t_minishell *shell)
 {
-
 	if (get_quote_status(shell->input) == -1)
 	{
 		shell->exit_status = 2;
