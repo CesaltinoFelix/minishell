@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_heredoc_utils.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/15 12:56:38 by pcapalan          #+#    #+#             */
+/*   Updated: 2025/04/15 13:13:01 by pcapalan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #include "./../minishell.h"
 
 extern int g_status;
 
-void heredoc_signal_handler(int sig)
+void	heredoc_signal_handler(int sig)
 {
     (void)sig;
     g_status = 1;
@@ -11,25 +24,38 @@ void heredoc_signal_handler(int sig)
     exit(130);
 }
 
-void setup_heredoc_signals()
-{
-    signal(SIGINT, heredoc_signal_handler);
-}
-
-void ignore_sigint()
+void	ignore_sigint()
 {
     signal(SIGINT, SIG_IGN);
 }
 
-void restore_sigint()
+
+int	redirect_heredoc_input(t_minishell *shell, char *file)
 {
-    signal(SIGINT, sigint_handler);
+	int	fd;
+
+	if (shell->stdin_backup == -1)
+		shell->stdin_backup = dup(STDIN_FILENO);
+	if ((fd = open(file, O_RDONLY)) == -1)
+	{
+		perror("open");
+		printf("error: could not open heredoc file\n");
+		return (-1);
+	}
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		printf("error: dup2 failed\n");
+		return (close(fd), -1);
+	}
+	close(fd);
+	unlink(file);
+	return (0);
 }
 
-int wait_for_heredoc(t_minishell *shell, int pid, char *file)
+int	wait_for_heredoc(t_minishell *shell, int pid, char *file)
 {
-    int status;
-    int exit_status;
+    int		status;
+    int		exit_status;
 
     waitpid(pid, &status, 0);
     if (WIFEXITED(status))

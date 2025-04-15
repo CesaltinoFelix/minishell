@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:54 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/10 14:15:34 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 12:52:18 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	verify_range(t_minishell *shell, char **ptr, long long int *result, int sign
 			printf("minishell: exit: %s: numeric argument required\n",
 			shell->parsed_input[1]);
 			shell->exit_status = 2;
-			return (1);
+			return (-1);
 		}
 		*result = *result * 10 + digit;
 		(*ptr)++;
@@ -35,12 +35,12 @@ int	verify_range(t_minishell *shell, char **ptr, long long int *result, int sign
 		printf("minishell: exit: %s: numeric argument required\n",
 		shell->parsed_input[1]);
 		shell->exit_status = 2;
-		return (1);
+		return (-1);
 	}
 	return (0);
 }
 
-void	ft_atoi2(t_minishell *shell,char *ptr)
+static int	ft_atoi2(t_minishell *shell,char *ptr)
 {
 	int	signal;
 	long long int	result;
@@ -56,8 +56,9 @@ void	ft_atoi2(t_minishell *shell,char *ptr)
 		ptr++;
 	}
 	if (verify_range(shell, &ptr, &result, signal) != 0)
-		return ;
+		return (-1);
 	shell->exit_status = (int)((result * signal) & 255);
+	return (0);
 }
 
 void	handle_exit_command(t_minishell *shell)
@@ -65,15 +66,7 @@ void	handle_exit_command(t_minishell *shell)
 
 	printf("exit\n");
 	if (shell->parsed_input[1])
-	{
 		ft_atoi2(shell, shell->parsed_input[1]);
-		if (shell->parsed_input[2])
-		{
-			printf("minishell: exit: too many arguments\n");
-			shell->exit_status = 1;
-			return ;
-		}
-	}
 	check_to_free(shell);
 	exit(shell->exit_status);
 }

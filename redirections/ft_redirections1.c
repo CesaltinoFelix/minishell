@@ -6,33 +6,11 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:21 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 16:38:18 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 13:10:25 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./../minishell.h"
-
-int redirect_heredoc_input(t_minishell *shell, char *file);
-
-static int	open_output_file(t_minishell *shell, int i, int flags)
-{
-	int	fd;
-
-	fd = open(shell->parsed_input[i + 1], flags, 0644);
-	if (fd == -1)
-	{
-		perror("minishell: error opening file");
-		return (-1);
-	}
-	if (dup2(fd, STDOUT_FILENO) == -1)
-	{
-		perror("minishell: error redirecting");
-		close(fd);
-		return (-1);
-	}
-	close(fd);
-	return (0);
-}
 
 static int	handle_output_redir(t_minishell *shell, int i)
 {
@@ -78,7 +56,7 @@ static int	handle_input_redir(t_minishell *shell, int i)
 	return (0);
 }
 
-int	aux_process_redirection(t_minishell *shell, int *i, int *res)
+static int	aux_process_redirection(t_minishell *shell, int *i, int *res)
 {
 	if (is_output_redirection(shell->parsed_input[*i]))
 	{

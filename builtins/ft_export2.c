@@ -80,8 +80,9 @@ int	find_and_update_env_var(t_minishell *shell, char *new_var)
 			if (shell->env_var.value)
 			{
 				free(shell->env_variables[i]);
-				shell->env_variables[i] = new_var;
+				shell->env_variables[i] = ft_strdup(new_var);
 			}
+			free(new_var);
 			return (1);
 		}
 	}

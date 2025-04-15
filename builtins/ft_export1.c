@@ -1,16 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_export.c                                        :+:      :+:    :+:   */
+/*   ft_export1.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+        */
-/*   Created: 2025/03/20 13:02:58 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/20 13:11:20 by cefelix          ###   ########.fr       */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/15 11:38:35 by pcapalan          #+#    #+#             */
+/*   Updated: 2025/04/15 12:38:40 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../minishell.h"
+
+static void ft_free_env_vars(t_minishell *shell)
+{
+	if (shell->env_var.key)
+		free(shell->env_var.key);
+	if (shell->env_var.value)
+		free(shell->env_var.value);
+}
 
 void	update_or_add_env_var(t_minishell *shell)
 {
@@ -22,7 +31,7 @@ void	update_or_add_env_var(t_minishell *shell)
 	else
 		shell->env_var.key_len = ft_strlen(shell->env_var.key);
 	new_var = create_env_var_string(shell);
-	if (!find_and_update_env_var(shell, new_var))
+	if (find_and_update_env_var(shell, new_var) == 0)
 		add_env_var_to_array(shell, new_var);
 }
 
@@ -41,8 +50,7 @@ int	handle_export_command(t_minishell *shell)
 		{
 			extract_env_key_value(shell, shell->parsed_input[i]);
 			update_or_add_env_var(shell);
-			free(shell->env_var.key);
-			free(shell->env_var.value);
+			ft_free_env_vars(shell);
 		}
 		else
 		{

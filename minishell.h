@@ -6,7 +6,7 @@
 /*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/14 16:30:36 by pcapalan         ###   ########.fr       */
+/*   Updated: 2025/04/15 13:13:13 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ typedef struct s_pipeline
 	int		fd_out;
 }	t_pipeline;
 
-/* Function Prototypes */
+
 void		print_matrix(char **matrix);
 void		ft_write_error(char *str);
 void		run_shell(t_minishell *shell);
@@ -96,8 +96,6 @@ t_pipeline *cmds, int cmd_count);
 void		expand_all_env_variables(t_minishell *shell);
 void		sigint_handler(int sig);
 void		ignore_sigint(void);
-void		restore_sigint(void);
-void		setup_heredoc_signals(void);
 void		heredoc_signal_handler(int sig);
 void		handle_exit_command(t_minishell *shell);
 void		expand_single_env_variable(t_minishell *shell, char **current);
@@ -121,7 +119,7 @@ char		*create_env_var_string(t_minishell *shell);
 char		*allocate_updated_input(size_t updated_len);
 char		*get_output_file(char **cmd_args);
 char		*get_input_file(char **cmd_args);
-int is_append_mode(char **cmd_args);
+int		is_append_mode(char **cmd_args);
 
 char		**tokenize_input(t_minishell *shell);
 char		**ft_cpy_env_variables(char *env[]);
@@ -147,6 +145,7 @@ int			execute_external_command(t_minishell *shell);
 int			count_backslashes_before(char *str, char *pos);
 int			is_valid_env_var_name(const char *name);
 int			ft_handle_redirections(t_minishell *shell);
+int			open_output_file(t_minishell *shell, int i, int flags);
 int			copy_without_quotes(char *dest, const char *src, int size);
 int			ft_handle_heredoc(t_minishell *shell, int i, char *heredoc_path);
 int			is_env_var_match(const char *env_var, \
@@ -159,6 +158,9 @@ int			set_output_flags(char *redir_type);
 int			is_builtin(char *cmd);
 int			wait_for_signal(int pid);
 int			exec_redirection(t_minishell *shell, t_pipeline	*cmds, int cmd_count);
+int			handle_heredoc_child(int fd, t_minishell *shell, int i, char *file);
+int			read_heredoc_input(int fd, t_minishell *shell, int i);
+int			redirect_heredoc_input(t_minishell *shell, char *file);
 size_t		count_tokens(const char *input, char delimiter);
 
 t_pipeline	*split_commands(t_minishell *shell, int *cmd_count);
