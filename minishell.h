@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:04:26 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 21:26:46 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/16 01:01:58 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ typedef struct s_pipeline
 	int			fd_out;
 }				t_pipeline;
 
-void			ft_write_error(char *str);
+void			ft_write_error(char *str, char *write_error);
 void			run_shell(t_minishell *shell);
 void			ft_free_matrix(char **matrix);
 void			initialize_signal_handlers(void);
@@ -112,6 +112,9 @@ void			process_token(const char **input, char *quote, char delimiter,
 					size_t *count);
 void			extract_env_key_value(t_minishell *shell, const char *arg);
 void			add_env_var_to_array(t_minishell *shell, char *new_var);
+void			ft_run_execve(t_minishell *shell, int *i, char **path);
+void			aux_execute_external_cmd(t_minishell *shell, int *i,
+					char **path);
 
 char			*trim_whitespace(char *str);
 char			*ft_getenv(t_minishell *shell, const char *key);

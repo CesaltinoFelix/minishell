@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   ft_file_error.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:01:44 by cefelix           #+#    #+#             */
-/*   Updated: 2025/03/24 14:43:37 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/15 23:14:42 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_write_error(char *str)
+void	ft_write_error(char *str, char *write_error)
 {
-	while (*str)
-		write(2, str++, 1);
-	ft_putendl_fd(": command not found", 2);
+	write(2, str, ft_strlen(str));
+	ft_putendl_fd(write_error, 2);
 }
 
 void	print_invalid_identifier_error(const char *arg)

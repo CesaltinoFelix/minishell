@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_execute.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 16:14:05 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 19:51:10 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/16 00:57:37 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,9 @@ int	execute_external_command(t_minishell *shell)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		path = getenv("PATH");
+		path = ft_getenv(shell, "PATH");
 		shell->system_paths = ft_split(path, ':');
-		if (!shell->system_paths)
-			exit(1);
-		ft_run_execve(shell, &i, &path);
-		ft_write_error(shell->parsed_input[0]);
-		ft_free_matrix(shell->system_paths);
-		exit(127);
+		aux_execute_external_cmd(shell, &i, &path);
 	}
 	signal_status = wait_for_signal(pid);
 	return (signal_status);
@@ -78,8 +73,10 @@ int	execute_command(t_minishell *shell)
 		duplicate_matrix_without_quotes(shell->parsed_input, token_count);
 	ft_free_matrix(token);
 	result = handle_builtin_commands(shell);
-	if (result != -1)
+	if (result == 0)
 		return (result);
+	else if (result == -1)
+		return (0);
 	return (execute_external_command(shell));
 }
 

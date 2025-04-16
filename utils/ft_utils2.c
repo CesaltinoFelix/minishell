@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cefelix <cefelix@student.42.fr>            +#+  +:+       +#+        */
+/*   By: pcapalan <pcapalan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 13:02:08 by cefelix           #+#    #+#             */
-/*   Updated: 2025/04/15 21:12:56 by cefelix          ###   ########.fr       */
+/*   Updated: 2025/04/16 01:01:17 by pcapalan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	is_append_mode(char **cmd_args)
 
 int	handle_builtin_commands(t_minishell *shell)
 {
+	if (shell->parsed_input[0] == NULL)
+		return (-1);
 	if (ft_strcmp(shell->parsed_input[0], "echo") == 0)
 		return (handle_echo_command(shell));
 	else if (ft_strcmp(shell->parsed_input[0], "cd") == 0)
@@ -47,11 +49,11 @@ int	handle_builtin_commands(t_minishell *shell)
 		handle_exit_command(shell);
 		return (shell->exit_status);
 	}
-	return (-1);
+	return (777);
 }
 
 void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
-	int prev_pipe_in, int pipes[2])
+		int prev_pipe_in, int pipes[2])
 {
 	char	**parsed_input;
 
@@ -65,4 +67,20 @@ void	handle_child_process(t_minishell *shell, t_pipeline *cmd,
 	ft_free_matrix(shell->parsed_input);
 	shell->parsed_input = parsed_input;
 	exit(shell->exit_status);
+}
+
+void	aux_execute_external_cmd(t_minishell *shell, int *i, char **path)
+{
+	if (!shell->system_paths)
+	{
+		write(2, "minishell: ", 12);
+		ft_write_error(shell->parsed_input[0], " : No such file or directory");
+		free(shell->input);
+		exit(127);
+	}
+	ft_run_execve(shell, i, path);
+	ft_write_error(shell->parsed_input[0], ": command not found");
+	ft_free_matrix(shell->system_paths);
+	free(shell->input);
+	exit(127);
 }
